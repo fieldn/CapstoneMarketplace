@@ -1,23 +1,8 @@
 {% extends "body.html" %}
 {% block content %}
-    <div class="container" role="main">
-        <div class="table-responsive">
-            <table class="table table-striped sortable">
-                <thead>
-                    <tr>
-                      <th style="width: 20%">Time</th>
-					  <th style="width: 80%">Comment</th>
-                    </tr>
-                </thead>
-                <tbody>
-                   {% for item in comments %}
-                   <tr>
-					   <td>{{ item.time }}</td>
-                       <td>{{ item.comment }}</td>
-                   </tr>
-                   {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+<style>
+.container li { list-style-type: none; border-left: 1px solid lightGray; margin: 0; padding-left: 1em; }
+</style>
+<div class="container" role="main" id="comments"></div>
+<div id="data" data-comments="{{comments}}"></div>
 {% endblock %}

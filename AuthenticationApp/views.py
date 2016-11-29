@@ -25,7 +25,7 @@ def auth_login(request):
 		password = form.cleaned_data['password']
 		user = authenticate(email=email, password=password)
 		if user is not None:
-			messages.success(request, 'Success! Welcome, '+(user.first_name or ""))
+			messages.success(request, 'Success! Welcome, ' + (user.first_name or ""))
 			login(request, user)
 			return HttpResponseRedirect(next_url)
 		else:

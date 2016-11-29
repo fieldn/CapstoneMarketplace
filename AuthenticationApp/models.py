@@ -14,10 +14,10 @@ class MyUserManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address')
 
-        #We can safetly create the user
-        #Only the email field is required
+        #We can safely create the user; only the email field is required
         user = self.model(email=email)
         user.set_password(password)
+        user.last_name = last_name
 
         #If first_name is not present, set it as email's username by default
         if first_name is None or first_name == "" or first_name == '':                                
@@ -54,11 +54,9 @@ class MyUser(AbstractBaseUser):
 
     is_active = models.BooleanField(default=True,)
     is_admin = models.BooleanField(default=False,)
-
-    # #New fields added
-    # is_student = models.BooleanField(default=False,)
-    # is_professor = models.BooleanField(default=False,)
-    # is_engineer = models.BooleanField(default=False,)    
+    #is_student = models.BooleanField(default=False,)
+    #is_professor = models.BooleanField(default=False,)
+    #is_engineer = models.BooleanField(default=False,)    
 
     objects = MyUserManager()
 
