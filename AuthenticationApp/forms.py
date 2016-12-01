@@ -21,6 +21,24 @@ class RegisterForm(forms.Form):
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
 
+    student = forms.ChoiceField(label='Student', widget=forms.CheckboxInput, required=True)
+    studentPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
+    studentAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
+
+    teacher = forms.ChoiceField(label='Teacher', widget=forms.CheckboxInput, required=True)
+    teacherTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
+    teacherPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
+    teacherEmail =  forms.CharField(label="Email", widget=forms.TextInput, required=False)
+    teacherOffice = forms.CharField(label="Office", widget=forms.TextInput, required=False)
+    teacherAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
+
+    engineer = forms.ChoiceField(label='Engineer', widget=forms.CheckboxInput, required=True)
+    engineerTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
+    engineerAlmaMater = forms.CharField(label="Alma Mater", widget=forms.TextInput, required=False)               
+    engineerPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
+    engineerEmail =  forms.CharField(label="Email", widget=forms.TextInput, required=False)
+    engineerAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
+
     def clean_password2(self):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")

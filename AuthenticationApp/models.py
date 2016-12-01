@@ -22,7 +22,7 @@ class MyUserManager(BaseUserManager):
         #If first_name is not present, set it as email's username by default
         if first_name is None or first_name == "" or first_name == '':                                
             user.first_name = email[:email.find("@")]            
-        
+
         user.save(using=self._db)
         return user
 
@@ -38,25 +38,25 @@ class MyUser(AbstractBaseUser):
         verbose_name='email address',
         max_length=255,
         unique=True,
-    )
+        )
 
     first_name = models.CharField(
-    	max_length=120,
-    	null=True,
-    	blank=True,
-    	)    
+        max_length=120,
+        null=True,
+        blank=True,
+        )    
 
     last_name = models.CharField(
-    	max_length=120,
-    	null=True,
-    	blank=True,
-    	)
+        max_length=120,
+        null=True,
+        blank=True,
+        )
 
     is_active = models.BooleanField(default=True,)
     is_admin = models.BooleanField(default=False,)
-    #is_student = models.BooleanField(default=False,)
-    #is_professor = models.BooleanField(default=False,)
-    #is_engineer = models.BooleanField(default=False,)    
+    is_student = models.BooleanField(default=False,)
+    is_teacher = models.BooleanField(default=False,)
+    is_engineer = models.BooleanField(default=False,)    
 
     objects = MyUserManager()
 
@@ -84,19 +84,31 @@ class MyUser(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
-    
+
 #     def new_user_reciever(sender, instance, created, *args, **kwargs):
 #     	if created:   
-     
+
 # Going to use signals to send emails
 # post_save.connect(new_user_reciever, sender=MyUser)
-             
+
 
 class Student(models.Model):
     user = models.OneToOneField(
         MyUser,
         on_delete=models.CASCADE,
         primary_key=True)
+
+    phone = models.CharField(
+        max_length=11,
+        null=True,
+        blank=True,
+        )
+
+    about = models.CharField(
+        max_length=250,
+        null=True,
+        blank=True,
+        )
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
@@ -116,6 +128,122 @@ class Student(models.Model):
     def has_module_perms(self, app_label):        
         return True
 
+    @property
+    def is_staff(self):
+        return False
+
+class Teacher(models.Model):
+    user = models.OneToOneField(
+        MyUser,
+        on_delete=models.CASCADE,
+        primary_key=True)
+
+    phone = models.CharField(
+        max_length=11,
+        null=True,
+        blank=True,
+        )
+
+    about = models.CharField(
+        max_length=250,
+        null=True,
+        blank=True,
+        )
+
+    title = models.CharField(
+        max_length=32,
+        null=True,
+        blank=True,
+        )
+
+    email = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        )
+    
+    office = models.CharField(
+        max_length=32,
+        null=True,
+        blank=True,
+        )
+
+    def get_full_name(self):        
+        return "%s %s" %(self.user.first_name, self.user.last_name)
+
+    def get_short_name(self):        
+        return self.user.first_name
+
+    def __str__(self):              #Python 3
+        return self.user.email
+
+    def __unicode__(self):           # Python 2
+        return self.user.email
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):        
+        return True
+
+
+    @property
+    def is_staff(self):
+        return False
+
+class Engineer(models.Model):
+    user = models.OneToOneField(
+        MyUser,
+        on_delete=models.CASCADE,
+        primary_key=True)
+
+    phone = models.CharField(
+        max_length=11,
+        null=True,
+        blank=True,
+        )
+
+    about = models.CharField(
+        max_length=250,
+        null=True,
+        blank=True,
+        )
+
+    title = models.CharField(
+        max_length=32,
+        null=True,
+        blank=True,
+        )
+
+    email = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        )
+    
+    almaMater = models.CharField(
+        max_length=32,
+        null=True,
+        blank=True,
+        )
+
+    def get_full_name(self):        
+        return "%s %s" %(self.user.first_name, self.user.last_name)
+
+    def get_short_name(self):        
+        return self.user.first_name
+
+    def __str__(self):              #Python 3
+        return self.user.email
+
+    def __unicode__(self):           # Python 2
+        return self.user.email
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):        
+        return True
 
     @property
     def is_staff(self):
