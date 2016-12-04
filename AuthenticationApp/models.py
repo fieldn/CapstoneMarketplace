@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 
 # Create your models here.
 class MyUserManager(BaseUserManager):
-    def create_user(self, email=None, password=None, first_name=None, last_name=None):
+    def create_user(self, email=None, password=None, first_name=None, last_name=None, is_student=None, is_teacher=None, is_engineer=None):
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -18,6 +18,9 @@ class MyUserManager(BaseUserManager):
         user = self.model(email=email)
         user.set_password(password)
         user.last_name = last_name
+        user.is_student = is_student
+        user.is_teacher = is_teacher
+        user.is_engineer = is_engineer
 
         #If first_name is not present, set it as email's username by default
         if first_name is None or first_name == "" or first_name == '':                                
@@ -26,8 +29,8 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email=None, password=None, first_name=None, last_name=None):
-        user = self.create_user(email, password=password, first_name=first_name, last_name=last_name)
+    def create_superuser(self, email=None, password=None, first_name=None, last_name=None, is_student=None, is_teacher=None, is_engineer=None):
+        user = self.create_user(email, password=password, first_name=first_name, last_name=last_name, is_student=None, is_teacher=None, is_engineer=None)
         user.is_admin = True
         user.save(using=self._db)
         return user

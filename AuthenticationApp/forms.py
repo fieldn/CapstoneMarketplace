@@ -21,18 +21,18 @@ class RegisterForm(forms.Form):
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
 
-    student = forms.ChoiceField(label='Student', widget=forms.CheckboxInput, required=True)
+    student = forms.BooleanField(label='Student', widget=forms.CheckboxInput, required=False)
     studentPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     studentAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
 
-    teacher = forms.ChoiceField(label='Teacher', widget=forms.CheckboxInput, required=True)
+    teacher = forms.BooleanField(label='Teacher', widget=forms.CheckboxInput, required=False)
     teacherTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
     teacherPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     teacherEmail =  forms.CharField(label="Email", widget=forms.TextInput, required=False)
     teacherOffice = forms.CharField(label="Office", widget=forms.TextInput, required=False)
     teacherAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
 
-    engineer = forms.ChoiceField(label='Engineer', widget=forms.CheckboxInput, required=True)
+    engineer = forms.BooleanField(label='Engineer', widget=forms.CheckboxInput, required=False)
     engineerTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
     engineerAlmaMater = forms.CharField(label="Alma Mater", widget=forms.TextInput, required=False)               
     engineerPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
