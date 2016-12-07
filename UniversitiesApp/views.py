@@ -13,7 +13,7 @@ def getUniversities(request):
         universities_list = models.University.objects.all()
         context = {
             'universities' : universities_list,
-        }
+            }
         return render(request, 'universities.html', context)
     # render error page if user is not logged in
     return render(request, 'autherror.html')
@@ -26,7 +26,7 @@ def getUniversity(request):
         context = {
             'university' : in_university,
             'userIsMember': is_member,
-        }
+            }
         return render(request, 'university.html', context)
     # render error page if user is not logged in
     return render(request, 'autherror.html')
@@ -45,13 +45,13 @@ def getUniversityFormSuccess(request):
                 if models.University.objects.filter(name__exact=form.cleaned_data['name']).exists():
                     return render(request, 'universityform.html', {'error' : 'Error: That university name already exists!'})
                 new_university = models.University(name=form.cleaned_data['name'], 
-                                             photo=request.FILES['photo'],  
-                                             description=form.cleaned_data['description'],
-                                             website=form.cleaned_data['website'])
+                    photo=request.FILES['photo'],  
+                    description=form.cleaned_data['description'],
+                    website=form.cleaned_data['website'])
                 new_university.save()
                 context = {
                     'name' : form.cleaned_data['name'],
-                }
+                    }
                 return render(request, 'universityformsuccess.html', context)
             else:
                 return render(request, 'universityform.html', {'error' : 'Error: Photo upload failed!'})
@@ -62,20 +62,58 @@ def getUniversityFormSuccess(request):
     return render(request, 'autherror.html')
 
 def joinUniversity(request):
-    if request.user.is_authenticated():
-        in_name = request.GET.get('name', 'None')
-        in_university = models.University.objects.get(name__exact=in_name)
-        in_university.members.add(request.user)
-        in_university.save();
-        request.user.university_set.add(in_university)
-        request.user.save()
+    # check that the user is authenticated
+    if not request.user.is_authenticated():
+        return render(request, 'autherror.html')
+
+    """
+    # check that the user is a student or a teacher
+    roleUser = None
+    if request.user.is_student:
+        roleUser = models.Student.objects.get(MyUser=request.user)
+    if request.user.is_teacher:
+        roleUser = models.Teacher.objects.get(MyUser=request.user)
+    if roleUser == None:
+        # TODO actually have error for this
+        return render(request, 'autherror.html')
+    
+    # check that the user does not already belong to a university
+    if roleUser.university != None:
+        # TODO actually have error for this
+        return render(request, 'autherror.html')
+    """
+    
+    in_name = request.GET.get('name', 'None')
+    in_university = models.University.objects.get(name__exact=in_name)
+
+    # Check that the user is a student or a teacher
+    if not request.user.is_student and not request.user.is_teacher:
+        # TODO show error message saying you must be a student or teacher
         context = {
             'university' : in_university,
-            'userIsMember': True,
-        }
+            'userIsMember': False,
+            }
         return render(request, 'university.html', context)
-    return render(request, 'autherror.html')
-    
+
+    # Check that the user is not already in another university
+    if len(request.user.university_set.all()) > 0:
+        # TODO show error message when trying to another university
+        context = {
+            'university' : in_university,
+            'userIsMember': False,
+            }
+        return render(request, 'university.html', context)
+
+    in_university.members.add(request.user)
+    in_university.save();
+    request.user.university_set.add(in_university)
+    request.user.save()
+    context = {
+        'university' : in_university,
+        'userIsMember': True,
+        }
+    return render(request, 'university.html', context)
+
 def unjoinUniversity(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
@@ -87,113 +125,113 @@ def unjoinUniversity(request):
         context = {
             'university' : in_university,
             'userIsMember': False,
-        }
+            }
         return render(request, 'university.html', context)
     return render(request, 'autherror.html')
-    
+
 def getCourse(request):
-	if request.user.is_authenticated():
-		in_university_name = request.GET.get('name', 'None')
-		in_university = models.University.objects.get(name__exact=in_university_name)
-		in_course_tag = request.GET.get('course', 'None')
-		in_course = in_university.course_set.get(tag__exact=in_course_tag)
-		is_member = in_course.members.filter(email__exact=request.user.email)
-		context = {
-			'university' : in_university,
-			'course' : in_course,
-			'userInCourse' : is_member,
-		}
-		return render(request, 'course.html', context)
-	return render(request, 'autherror.html')
+    if request.user.is_authenticated():
+        in_university_name = request.GET.get('name', 'None')
+        in_university = models.University.objects.get(name__exact=in_university_name)
+        in_course_tag = request.GET.get('course', 'None')
+        in_course = in_university.course_set.get(tag__exact=in_course_tag)
+        is_member = in_course.members.filter(email__exact=request.user.email)
+        context = {
+            'university' : in_university,
+            'course' : in_course,
+            'userInCourse' : is_member,
+            }
+        return render(request, 'course.html', context)
+    return render(request, 'autherror.html')
 
 def courseForm(request):
-	if request.user.is_authenticated():
-		in_university_name = request.GET.get('name', 'None')
-		in_university = models.University.objects.get(name__exact=in_university_name)
-		context = {
-			'university': in_university,
-		}
-		return render(request, 'courseform.html', context)
+    if request.user.is_authenticated():
+        in_university_name = request.GET.get('name', 'None')
+        in_university = models.University.objects.get(name__exact=in_university_name)
+        context = {
+            'university': in_university,
+            }
+        return render(request, 'courseform.html', context)
     # render error page if user is not logged in
-	return render(request, 'autherror.html')
+    return render(request, 'autherror.html')
 
 def addCourse(request):
-	if request.user.is_authenticated():
-		if request.method == 'POST':
-			form = forms.CourseForm(request.POST)
-			if form.is_valid():
-				in_university_name = request.GET.get('name', 'None')
-				in_university = models.University.objects.get(name__exact=in_university_name)
-				if in_university.course_set.filter(tag__exact=form.cleaned_data['tag']).exists():
-					return render(request, 'courseform.html', {'error' : 'Error: That course tag already exists at this university!'})
-				new_course = models.Course(tag=form.cleaned_data['tag'],
-										   name=form.cleaned_data['name'],
-										   description=form.cleaned_data['description'],
-										   university=in_university)
-				new_course.save()
-				in_university.course_set.add(new_course)
-				is_member = in_university.members.filter(email__exact=request.user.email)
-				context = {
-					'university' : in_university,
-					'userIsMember': is_member,
-				}
-				return render(request, 'university.html', context)
-			else:
-				return render(request, 'courseform.html', {'error' : 'Undefined Error!'})
-		else:
-			form = forms.CourseForm()
-			return render(request, 'courseform.html')
-		# render error page if user is not logged in
-	return render(request, 'autherror.html')
-		
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            form = forms.CourseForm(request.POST)
+            if form.is_valid():
+                in_university_name = request.GET.get('name', 'None')
+                in_university = models.University.objects.get(name__exact=in_university_name)
+                if in_university.course_set.filter(tag__exact=form.cleaned_data['tag']).exists():
+                    return render(request, 'courseform.html', {'error' : 'Error: That course tag already exists at this university!'})
+                new_course = models.Course(tag=form.cleaned_data['tag'],
+                    name=form.cleaned_data['name'],
+                    description=form.cleaned_data['description'],
+                    university=in_university)
+                new_course.save()
+                in_university.course_set.add(new_course)
+                is_member = in_university.members.filter(email__exact=request.user.email)
+                context = {
+                    'university' : in_university,
+                    'userIsMember': is_member,
+                    }
+                return render(request, 'university.html', context)
+            else:
+                return render(request, 'courseform.html', {'error' : 'Undefined Error!'})
+        else:
+            form = forms.CourseForm()
+            return render(request, 'courseform.html')
+        # render error page if user is not logged in
+    return render(request, 'autherror.html')
+
 def removeCourse(request):
-	if request.user.is_authenticated():
-		in_university_name = request.GET.get('name', 'None')
-		in_university = models.University.objects.get(name__exact=in_university_name)
-		in_course_tag = request.GET.get('course', 'None')
-		in_course = in_university.course_set.get(tag__exact=in_course_tag)
-		in_course.delete()
-		is_member = in_university.members.filter(email__exact=request.user.email)
-		context = {
-			'university' : in_university,
-			'userIsMember' : is_member,
-		}
-		return render(request, 'university.html', context)
-	# render error page if user is not logged in
-	return render(request, 'autherror.html')
+    if request.user.is_authenticated():
+        in_university_name = request.GET.get('name', 'None')
+        in_university = models.University.objects.get(name__exact=in_university_name)
+        in_course_tag = request.GET.get('course', 'None')
+        in_course = in_university.course_set.get(tag__exact=in_course_tag)
+        in_course.delete()
+        is_member = in_university.members.filter(email__exact=request.user.email)
+        context = {
+            'university' : in_university,
+            'userIsMember' : is_member,
+            }
+        return render(request, 'university.html', context)
+    # render error page if user is not logged in
+    return render(request, 'autherror.html')
 
 def joinCourse(request):
-	if request.user.is_authenticated():
-		in_university_name = request.GET.get('name', 'None')
-		in_university = models.University.objects.get(name__exact=in_university_name)
-		in_course_tag = request.GET.get('course', 'None')
-		in_course = in_university.course_set.get(tag__exact=in_course_tag)
-		in_course.members.add(request.user)
-		in_course.save();
-		request.user.course_set.add(in_course)
-		request.user.save()
-		context = {
-			'university' : in_university,
-			'course' : in_course,
-			'userInCourse': True,
-		}
-		return render(request, 'course.html', context)
-	return render(request, 'autherror.html')
+    if request.user.is_authenticated():
+        in_university_name = request.GET.get('name', 'None')
+        in_university = models.University.objects.get(name__exact=in_university_name)
+        in_course_tag = request.GET.get('course', 'None')
+        in_course = in_university.course_set.get(tag__exact=in_course_tag)
+        in_course.members.add(request.user)
+        in_course.save();
+        request.user.course_set.add(in_course)
+        request.user.save()
+        context = {
+            'university' : in_university,
+            'course' : in_course,
+            'userInCourse': True,
+            }
+        return render(request, 'course.html', context)
+    return render(request, 'autherror.html')
 
 def unjoinCourse(request):
-	if request.user.is_authenticated():
-		in_university_name = request.GET.get('name', 'None')
-		in_university = models.University.objects.get(name__exact=in_university_name)
-		in_course_tag = request.GET.get('course', 'None')
-		in_course = in_university.course_set.get(tag__exact=in_course_tag)
-		in_course.members.remove(request.user)
-		in_course.save();
-		request.user.course_set.remove(in_course)
-		request.user.save()
-		context = {
-			'university' : in_university,
-			'course' : in_course,
-			'userInCourse': False,
-		}
-		return render(request, 'course.html', context)
-	return render(request, 'autherror.html')
+    if request.user.is_authenticated():
+        in_university_name = request.GET.get('name', 'None')
+        in_university = models.University.objects.get(name__exact=in_university_name)
+        in_course_tag = request.GET.get('course', 'None')
+        in_course = in_university.course_set.get(tag__exact=in_course_tag)
+        in_course.members.remove(request.user)
+        in_course.save();
+        request.user.course_set.remove(in_course)
+        request.user.save()
+        context = {
+            'university' : in_university,
+            'course' : in_course,
+            'userInCourse': False,
+            }
+        return render(request, 'course.html', context)
+    return render(request, 'autherror.html')
