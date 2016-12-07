@@ -35,7 +35,6 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
 class MyUser(AbstractBaseUser):
     email = models.EmailField(
         verbose_name='email address',
@@ -112,7 +111,7 @@ class Student(models.Model):
         null=True,
         blank=True,
         )
-
+    
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
 
@@ -169,7 +168,7 @@ class Teacher(models.Model):
         max_length=32,
         null=True,
         blank=True,
-        )
+        ) 
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)

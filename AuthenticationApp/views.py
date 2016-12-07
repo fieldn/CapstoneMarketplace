@@ -11,7 +11,7 @@ from django.contrib import messages
 
 
 from .forms import LoginForm, RegisterForm, UpdateForm
-from .models import MyUser, Student
+from .models import MyUser, Student, Teacher, Engineer
 
 # Auth Views
 

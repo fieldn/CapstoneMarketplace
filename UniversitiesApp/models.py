@@ -4,6 +4,7 @@ UniversitiesApp Models
 Created by Jacob Dunbar on 11/5/2016.
 """
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
 from AuthenticationApp.models import MyUser
 
 # Create your models here.
