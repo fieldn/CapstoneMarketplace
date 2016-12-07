@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.contrib import messages
 
 
-from .forms import LoginForm, RegisterForm, UpdateForm
+from .forms import LoginForm, RegisterForm, UpdateForm, UpdateStudentForm, UpdateTeacherForm, UpdateEngineerForm
 from .models import MyUser, Student, Teacher, Engineer
 
 # Auth Views
@@ -57,6 +57,7 @@ def auth_register(request):
             is_teacher=form.cleaned_data['teacher'],
             is_engineer=form.cleaned_data['engineer'],
         )
+
         new_user.save()
 
         #Also registering students
@@ -103,13 +104,30 @@ def auth_register(request):
 
 @login_required
 def update_profile(request):
+    # for the general data that all users share
     form = UpdateForm(request.POST or None, instance=request.user)
+
+    # for the specific data that only belongs to a student/teacher/engineer
+    form2 = None
+    if request.user.is_student == True:
+        form2 = UpdateStudentForm(request.POST or None, instance=Student.objects.get(user_id=request.user.id))
+    elif request.user.is_teacher == True:
+        form2 = UpdateTeacherForm(request.POST or None, instance=Teacher.objects.get(user_id=request.user.id))
+    elif request.user.is_engineer == True:
+        print "IS ENGINEER:"
+        print request.user.id
+        form2 = UpdateEngineerForm(request.POST or None, instance=Engineer.objects.get(user_id=request.user.id))
+
     if form.is_valid():
         form.save()
-        messages.success(request, 'Success, your profile was saved!')
+    if form2.is_valid():
+        form2.save()
+    if form.is_valid() and form2.is_valid():
+        messages.success(request, 'Success: your information was saved.')
 
     context = {
         "form": form,
+        "form2": form2,
         "page_name" : "Update",
         "button_value" : "Update",
         "links" : ["logout"],

@@ -4,7 +4,7 @@ Created by Naman Patwari on 10/4/2016.
 """
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
-from .models import MyUser
+from .models import MyUser, Student, Teacher, Engineer
 
 class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
@@ -63,10 +63,11 @@ class UpdateForm(forms.ModelForm):
     the user, but replaces the password field with admin's
     password hash display field.
     """
+
     password = ReadOnlyPasswordHashField()
 
     class Meta:
-        model = MyUser        
+        model = MyUser
         fields = ('email', 'password', 'first_name', 'last_name')
 
     def clean_password(self):            
@@ -93,7 +94,51 @@ class UpdateForm(forms.ModelForm):
             email = self.cleaned_data.get("email")                               
             return email[:email.find("@")]      
         return first_name
+
+class UpdateStudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ('about', 'phone')
+
+    def clean_about(self):
+        return self.cleaned_data.get("about")
+
+    def clean_phone(self):
+        return self.cleaned_data.get("phone")
+
+class UpdateTeacherForm(forms.ModelForm):
+    class Meta:
+        model = Teacher
+        fields = ('about', 'phone', 'title', 'office')
+
+    def clean_about(self):
+        return self.cleaned_data.get("about")
+
+    def clean_phone(self):
+        return self.cleaned_data.get("phone")
    
+    def clean_title(self):
+        return self.cleaned_data.get("title")
+
+    def clean_office(self):
+        return self.cleaned_data.get("office")
+
+class UpdateEngineerForm(forms.ModelForm):
+    class Meta:
+        model = Engineer
+        fields = ('about', 'phone', 'title', 'almaMater')
+
+    def clean_about(self):
+        return self.cleaned_data.get("about")
+
+    def clean_phone(self):
+        return self.cleaned_data.get("phone")
+
+    def clean_title(self):
+        return self.cleaned_data.get("title")
+
+    def clean_almaMater(self):
+        return self.cleaned_data.get("almaMater")
 
 
 """Admin Forms"""
@@ -102,11 +147,11 @@ class AdminUserCreationForm(forms.ModelForm):
     """A form for Admin to creating new users. Includes all the required
     fields, plus a repeated password."""
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)    
+    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
 
     class Meta:
         model = MyUser
-        fields = ('email', 'first_name', 'last_name')        
+        fields = ('email', 'first_name', 'last_name')
 
     def clean_password2(self):
         # Check that the two password entries match

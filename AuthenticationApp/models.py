@@ -65,15 +65,15 @@ class MyUser(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-	# user can only select to be one of {student, teacher, engineer}
-	# otherwise, just make them a student before saving in the database
+    # user can only select to be one of {student, teacher, engineer}
+    # otherwise, just make them a student before saving in the database
     def save(self, *args, **kwargs):
         if self.is_student:
-			self.is_teacher = self.is_engineer = False
+            self.is_teacher = self.is_engineer = False
         if self.is_teacher:
-			self.is_student = self.is_engineer = False
+            self.is_student = self.is_engineer = False
         if self.is_engineer:
-			self.is_student = self.is_teacher = False
+            self.is_student = self.is_teacher = False
         super(MyUser, self).save(*args, **kwargs)
 
     def get_full_name(self):        
@@ -99,7 +99,7 @@ class MyUser(AbstractBaseUser):
         return self.is_admin
 
 #     def new_user_reciever(sender, instance, created, *args, **kwargs):
-#     	if created:   
+#       if created:   
 
 # Going to use signals to send emails
 # post_save.connect(new_user_reciever, sender=MyUser)
@@ -109,7 +109,8 @@ class Student(models.Model):
     user = models.OneToOneField(
         MyUser,
         on_delete=models.CASCADE,
-        primary_key=True)
+        primary_key=True,
+        related_name="student_info")
 
     phone = models.CharField(
         max_length=11,
