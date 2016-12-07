@@ -68,7 +68,7 @@ def auth_register(request):
             new_student.save()
 
         #Register teacher
-        if new_user.is_teacher == True:
+        elif new_user.is_teacher == True:
             new_teacher = Teacher(user = new_user,
                 title = form.cleaned_data['teacherTitle'],
                 phone = form.cleaned_data['teacherPhone'],
@@ -79,7 +79,7 @@ def auth_register(request):
             new_teacher.save()
 
         #Register engineer
-        if new_user.is_engineer == True:
+        elif new_user.is_engineer == True:
             new_engineer = Engineer(user = new_user,
                 title = form.cleaned_data['engineerTitle'],
                 phone = form.cleaned_data['engineerPhone'],

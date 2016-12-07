@@ -65,6 +65,18 @@ class MyUser(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+	# user can only select to be one of {student, teacher, engineer}
+	# otherwise, just make them a student before saving in the database
+    def save(self, *args, **kwargs):
+        MyUser.objects.filter(
+            is_student=True).update(is_teacher=False, is_engineer=False)
+        MyUser.objects.filter(
+            is_teacher=True).update(is_student=False, is_engineer=False)
+        MyUser.objects.filter(
+            is_engineer=True).update(is_teacher=False, is_student=False)
+		
+        super(MyUser, self).save(*args, **kwargs)
+
     def get_full_name(self):        
         return "%s %s" %(self.first_name, self.last_name)
 

@@ -8,10 +8,10 @@ A marketplace for students/groups to find creative and challenging projects to w
 
 CS390 Students: Please refer to the [grading form](https://docs.google.com/document/d/1owkuHpkWHiZVTyX7PPE0SZMQ5wUxfQFdkWwn8CsJHo0/edit?usp=sharing) for most recent updates to these tasks.
 
-- [ ] Task 2 (10 pts): CommentsApp
-	- [ ] Task 2 Bonus (5 pts): Add Nested Comments to CommentsApp
-- [ ] 3.1 (2 pts): Create “Teacher” model with profile (contact info, etc)
-- [ ] 3.2 (3 pts): Create “Engineer” model with profile (Alma Mater, About, Contact Info, etc)
+- [X] Task 2 (10 pts): CommentsApp
+	- [X] Task 2 Bonus (5 pts): Add Nested Comments to CommentsApp
+- [X] 3.1 (2 pts): Create “Teacher” model with profile (contact info, etc)
+- [X] 3.2 (3 pts): Create “Engineer” model with profile (Alma Mater, About, Contact Info, etc)
 - [ ] 3.3 (8 pts): Complete “University” and “Class” models. All students should belong to 1 University, and can belong to multiple classes. Teachers should be able to manage who is enrolled in their class.
 - [ ] 3.4 (5 pts): Groups: Anyone can create a group. Only group members may add additional members to the group. Only groups can be assigned to a project.
 - [ ] 3.5 (5 pts): Projects: Projects can be only created by engineer/corporate users. Projects have a list of qualifications, which are used for matching. Projects are visible to everyone.
