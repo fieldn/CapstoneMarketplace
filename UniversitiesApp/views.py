@@ -65,23 +65,6 @@ def joinUniversity(request):
     # check that the user is authenticated
     if not request.user.is_authenticated():
         return render(request, 'autherror.html')
-
-    """
-    # check that the user is a student or a teacher
-    roleUser = None
-    if request.user.is_student:
-        roleUser = models.Student.objects.get(MyUser=request.user)
-    if request.user.is_teacher:
-        roleUser = models.Teacher.objects.get(MyUser=request.user)
-    if roleUser == None:
-        # TODO actually have error for this
-        return render(request, 'autherror.html')
-    
-    # check that the user does not already belong to a university
-    if roleUser.university != None:
-        # TODO actually have error for this
-        return render(request, 'autherror.html')
-    """
     
     in_name = request.GET.get('name', 'None')
     in_university = models.University.objects.get(name__exact=in_name)
@@ -92,6 +75,7 @@ def joinUniversity(request):
         context = {
             'university' : in_university,
             'userIsMember': False,
+            'error' : 'You must be a student or teacher!',
             }
         return render(request, 'university.html', context)
 
@@ -101,6 +85,7 @@ def joinUniversity(request):
         context = {
             'university' : in_university,
             'userIsMember': False,
+            'error' : 'You can only attend one university at at time!',
             }
         return render(request, 'university.html', context)
 
@@ -162,6 +147,11 @@ def addCourse(request):
             if form.is_valid():
                 in_university_name = request.GET.get('name', 'None')
                 in_university = models.University.objects.get(name__exact=in_university_name)
+
+                # make sure that the user is a teacher
+                if not request.user.is_teacher:
+                    return render(request, 'courseform.html', {'error' : 'Only teachers can create classes!'})
+
                 if in_university.course_set.filter(tag__exact=form.cleaned_data['tag']).exists():
                     return render(request, 'courseform.html', {'error' : 'Error: That course tag already exists at this university!'})
                 new_course = models.Course(tag=form.cleaned_data['tag'],
@@ -188,6 +178,11 @@ def removeCourse(request):
     if request.user.is_authenticated():
         in_university_name = request.GET.get('name', 'None')
         in_university = models.University.objects.get(name__exact=in_university_name)
+
+        # make sure that the user is a teacher
+        if not request.user.is_teacher:
+            return render(request, 'courseform.html', {'error' : 'Only teachers can remove classes!'})
+
         in_course_tag = request.GET.get('course', 'None')
         in_course = in_university.course_set.get(tag__exact=in_course_tag)
         in_course.delete()
@@ -234,4 +229,73 @@ def unjoinCourse(request):
             'userInCourse': False,
             }
         return render(request, 'course.html', context)
+    return render(request, 'autherror.html')
+
+def manageCourse(request):
+    if request.user.is_authenticated():
+
+        # make sure that the user is a teacher
+        if not request.user.is_teacher:
+            return render(request, 'manage.html', {'error' : 'Only teachers can remove classes!'})
+
+        in_university_name = request.GET.get('name', 'None')
+        in_university = models.University.objects.get(name__exact=in_university_name)
+        in_course_tag = request.GET.get('course', 'None')
+        in_course = in_university.course_set.get(tag__exact=in_course_tag)
+        
+        # handle form submission
+        if request.method == 'POST':
+            form = forms.AddStudentForm(request.POST)
+
+            # ensure form is valid
+            if not form.is_valid():
+                return render(request, 'manage.html', {'error' : 'Undefined Error!'})
+
+            # try and add all of the students to the class
+            students = form.cleaned_data['students']
+            for student in students.split(','):
+                user = models.MyUser.objects.get(email__exact=student.strip())
+
+                # check that the user is a student
+                if not user.is_student:
+                    continue
+
+                in_course.members.add(user)
+                in_course.save();
+                user.course_set.add(in_course)
+                user.save()
+
+        else:
+            form = forms.AddStudentForm()
+
+        context = {
+            'university' : in_university,
+            'course' : in_course,
+            }
+        return render(request, 'manage.html', context)
+    return render(request, 'autherror.html')
+
+
+def removeStudent(request):
+    if request.user.is_authenticated():
+
+        # make sure that the user is a teacher
+        if not request.user.is_teacher:
+            return render(request, 'manage.html', {'error' : 'Only teachers can remove classes!'})
+
+        in_email = request.GET.get('email', 'None')
+        in_user = models.MyUser.objects.get(email__exact=in_email)
+        in_university_name = request.GET.get('name', 'None')
+        in_university = models.University.objects.get(name__exact=in_university_name)
+        in_course_tag = request.GET.get('course', 'None')
+        in_course = in_university.course_set.get(tag__exact=in_course_tag)
+        in_course.members.remove(in_user)
+        in_course.save();
+        in_user.course_set.remove(in_course)
+        in_user.save()
+        context = {
+            'university' : in_university,
+            'course' : in_course,
+        }
+        return render(request, 'manage.html', context)
     return render(request, 'autherror.html')

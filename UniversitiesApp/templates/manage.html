@@ -1,0 +1,42 @@
+{% extends "body.html" %}
+
+{% block content %}
+	<!-- Content -->
+    <div class="container theme-showcase" role="main">
+		<div class="jumbotron">
+            <img src="/{{ university.photo }}" alt="University Image" width=150/>
+			<h2>{{ course.tag }}</h2>
+			<h3>{{ course.name }}</h3>
+			<p>{{ course.description }}</p>
+        </div>
+        <div class="panel panel-default">
+            <form method="post" enctype="multipart/form-data" action="/university/course/manage?name={{ university.name }}&course={{ course.tag }}" class="panel-body validate">
+                {% csrf_token %}
+				<label for="students">Enroll Students</label>
+				<input type="text" name="students" id="students" placeholder="student@school.edu,student2@school.edu,..." class="form-control" data-bvalidator="required" data-bvalidator-msg="Must list students to enroll">
+				<br>
+				<input type="submit" value="Submit" class="btn btn-primary">
+			</form>
+		</div>
+    </div>
+    <div class="container" role="main">
+		<div class="table-responsive">
+			<table class="table table-striped sortable">
+				<thead>
+					<tr>
+						<th>Students</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in course.members.all %}
+					<tr>
+						<td>{{ item.get_full_name }}</td>
+                        <td><a href="/university/course/removeStudent?name={{ university.name }}&course={{ course.tag }}&email={{ item.email }}" class="btn btn-default">Remove</a></td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+{% endblock %}
