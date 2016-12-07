@@ -114,8 +114,6 @@ def update_profile(request):
     elif request.user.is_teacher == True:
         form2 = UpdateTeacherForm(request.POST or None, instance=Teacher.objects.get(user_id=request.user.id))
     elif request.user.is_engineer == True:
-        print "IS ENGINEER:"
-        print request.user.id
         form2 = UpdateEngineerForm(request.POST or None, instance=Engineer.objects.get(user_id=request.user.id))
 
     if form.is_valid():
