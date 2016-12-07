@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import MyUser, Student
+from .models import MyUser, Student, Teacher, Engineer
 from .forms import AdminUserCreationForm, UserChangeForm
 
 class UserAdmin(BaseUserAdmin):
@@ -23,8 +23,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name',)}),
-        #('Permissions', {'fields': ('is_admin', 'is_active')}),
-        ('Permissions', {'fields': ('is_admin', 'is_active')}),
+        ('Permissions', {'fields': ('is_admin', 'is_active', 'is_student', 'is_teacher', 'is_engineer')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -43,4 +42,6 @@ class UserAdmin(BaseUserAdmin):
 # Now register the new UserAdmin...
 admin.site.register(MyUser, UserAdmin)
 admin.site.register(Student)
+admin.site.register(Teacher)
+admin.site.register(Engineer)
 admin.site.unregister(Group)
