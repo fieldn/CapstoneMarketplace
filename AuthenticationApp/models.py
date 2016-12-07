@@ -69,13 +69,12 @@ class MyUser(AbstractBaseUser):
 	# user can only select to be one of {student, teacher, engineer}
 	# otherwise, just make them a student before saving in the database
     def save(self, *args, **kwargs):
-        MyUser.objects.filter(
-            is_student=True).update(is_teacher=False, is_engineer=False)
-        MyUser.objects.filter(
-            is_teacher=True).update(is_student=False, is_engineer=False)
-        MyUser.objects.filter(
-            is_engineer=True).update(is_teacher=False, is_student=False)
-		
+        if self.is_student:
+			self.is_teacher = self.is_engineer = False
+        if self.is_teacher:
+			self.is_student = self.is_engineer = False
+        if self.is_engineer:
+			self.is_student = self.is_teacher = False
         super(MyUser, self).save(*args, **kwargs)
 
     def get_full_name(self):        
