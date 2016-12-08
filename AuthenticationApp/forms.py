@@ -98,7 +98,7 @@ class UpdateForm(forms.ModelForm):
 class UpdateStudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ('about', 'phone')
+        fields = ('about', 'phone', 'c_lang', 'java_lang', 'python_lang', 'no_lang', 'front_end_spec', 'back_end_spec', 'full_stack_spec', 'mobile_spec', 'no_spec', 'yrs_of_exp')
 
     def clean_about(self):
         return self.cleaned_data.get("about")
