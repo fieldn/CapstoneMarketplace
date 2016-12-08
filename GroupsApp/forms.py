@@ -14,3 +14,6 @@ class GroupForm(forms.Form):
     course = forms.CharField(label='course', required=False)
     members = forms.CharField(label='members', required=False)
 
+
+class CommentForm(forms.Form):
+    comment = forms.CharField(label='Text', max_length=500)

@@ -1,11 +1,14 @@
 {% extends "body.html" %}
-
 {% block content %}
+<style>
+.container li { list-style-type: none; border-left: 1px solid lightGray; margin: 0; padding-left: 1em; }
+</style>
+
+<div class="container" role="main" id="comments"></div>
+<div id="data" data-comments="{{comments}}"></div>
 
 <script>
 function timeDifference(current, previous) {
-    print 'CVBCVCVB'
-    print current
     var msPerMinute = 60 * 1000
     var msPerHour = msPerMinute * 60
     var msPerDay = msPerHour * 24
@@ -29,7 +32,6 @@ function timeDifference(current, previous) {
 }
 
 	$("#comments").html(function g (html, commentsList) {
-        print commentsList
 		return html + '<ul>' + commentsList.map(e => {
 			const sub = e.subcomments.length ? g(html, e.subcomments) : '' 
 			const timeStr = timeDifference(Date.now(), new Date(e.time))
@@ -38,6 +40,7 @@ function timeDifference(current, previous) {
 	}('', $("#data").data('comments').list) + '<p data-id=-1>Click to add a comment</p>')
 
 	let li = null;
+
 	$("#comments").click(e => {
 		const $target = $(e.target)
 		const parentId = e.target.dataset.id
@@ -52,9 +55,9 @@ function timeDifference(current, previous) {
 		li.append(inputBox)
 		li.append(button) 
 		button.click(e => {
-			$.post('/group/addComment', {
+			$.post('/group/gAddComment', {
 				comment: inputBox.val(),
-				id: parentId
+				id: parentId,
 			}, data => {
 				location.reload()
 			})
@@ -64,67 +67,6 @@ function timeDifference(current, previous) {
 		else
 			$target.children().first().prepend(li)
 	});
-})
 </script>
-
-	<!-- Content -->
-	<div class="container theme-showcase" role="main">
-		<div class="jumbotron">
-			<h1>{{ group.name }}</h1>
-			{% if group.project != None %}
-            <h2><a href="/project?name={{ group.project }}">{{ group.project }}</h2>
-			{% endif %}
-			<p>{{ group.description }}</p>
-			{% if userIsMember %}
-			<a href="/group/unjoin?name={{ group.name }}" class="btn btn-default">Unjoin this Group</a>
-			{% else %}
-			<a href="/group/join?name={{ group.name }}" class="btn btn-default">Join this Group</a>
-			{% endif %}
-			<a href="/group/getComments" class="btn btn-default">Discuss this Group</a>
-		</div>
-	</div>
-	
-	<div class="container">
-		<div class="table-responsive">
-			<table class="table table-striped sortable">
-				<thead>
-					<tr>
-						<th>Users</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for item in group.members.all %}
-					<tr>
-						<td>{{ item.get_full_name }}</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-
-	{% if group.project == None %}
-    <div class="container">
-		<div class="table-responsive">
-			<table class="table table-striped sortable">
-				<thead>
-					<tr>
-						<th>Suggested Projects</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for project in projects %}
-					<tr>
-                        <td><a href="/project?name={{ project.name }}">{{ project.name }}</a></td>
-                        <td>{{ project.description }}</td>
-                        <td><a href="/company?name={{ project.company.name }}">{{ project.company.name }}</a></td>
-                        <td><a href="/group/accept?group={{ group.name }}&project={{ project.name }}" class="btn btn-default">Accept this Project</a></td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-	{% endif %}
 
 {% endblock %}

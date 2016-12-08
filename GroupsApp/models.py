@@ -2,6 +2,7 @@
 
 Created by Naman Patwari on 10/10/2016.
 """
+from __future__ import unicode_literals
 from django.db import models
 from AuthenticationApp.models import MyUser
 from ProjectsApp.models import Project
@@ -17,3 +18,10 @@ class Group(models.Model):
     
     def __str__(self):
         return self.name
+
+class Comment(models.Model):
+	time = models.DateTimeField(auto_now=True)
+	user = models.CharField(max_length=100, default="")
+	comment = models.CharField(max_length=500, default="")
+	subcomments = models.TextField(default='')
+	parent = models.BooleanField(default=True)
