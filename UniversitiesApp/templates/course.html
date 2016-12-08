@@ -4,17 +4,27 @@
 	<!-- Content -->
     <div class="container theme-showcase" role="main">
 		<div class="jumbotron">
-            <img src="/{{ university.photo }}" alt="University Image" width=150/>
-			<h2>{{ course.tag }}</h2>
-			<h3>{{ course.name }}</h3>
-			<p>{{ course.description }}</p>
-            {% if userInCourse %}
-            <a href="/university/course/unjoin?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Unjoin this Course</a>
-            {% else %}
-            <a href="/university/course/join?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Join this Course</a>
-            {% endif %}
-			<a href="/university/course/remove?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Delete this Course</a>
-			<a href="/university/course/manage?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Manage this Course</a>
+			<div class="container">
+				<div class="row">
+					<div class=".col-md-4">
+						<img src="/{{ university.photo }}" alt="University Image" width=150 class="img-responsive" />
+					</div>
+					<div class=".col-md-8">
+						<h2>{{ course.tag }}</h2>
+						<h3>{{ course.name }}</h3>
+						<p>{{ course.description }}</p>
+						{% if userInCourse %}
+						<a href="/university/course/unjoin?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Leave this Course</a>
+						{% else %}
+						<a href="/university/course/join?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Join this Course</a>
+						{% endif %}
+						{% if user.is_teacher or user.is_admin %}
+						<a href="/university/course/remove?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Delete this Course</a>
+						<a href="/university/course/manage?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Manage this Course</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
 		</div>
     </div>
     <div class="container" role="main">
