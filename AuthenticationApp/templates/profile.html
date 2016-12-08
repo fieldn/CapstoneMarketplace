@@ -1,14 +1,12 @@
 {% extends "body.html" %}
 
-{% block head_title %}{{ page_name }} | {% endblock %}
-
 {% block content %}
 
 <div class="container" role="main">
         <h2> {{ user.get_full_name}} </h2>
         <h4> <a href="mailto:user.email">{{ user.email }}</a> </h4>
             {% if user.is_student  and student != None %}
-            About: {{ student.about }}
+            About: {{ student.about | safe }}
             <p>
             <b>Contact Info:</b>
             <p>
@@ -18,7 +16,7 @@
             <p>
             Title: {{ teacher.title }}
             <p>
-            About: {{ teacher.about }}
+            About: {{ teacher.about | safe }}
             <p>
             <b>Contact Info:</b>
             <p>
@@ -33,7 +31,7 @@
             <p>
             Alma Mater: {{ engineer.almaMater }}
             <p>
-            About: {{ engineer.about }}
+            About: {{ engineer.about | safe }}
             <p>
             <b>Contact Info:</b>
             <p>

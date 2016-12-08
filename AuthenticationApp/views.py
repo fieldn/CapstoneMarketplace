@@ -200,6 +200,7 @@ def view_profile(request):
     teacher = None
     if in_user.is_student:
         student = Student.objects.get(user=in_user)
+        print student.about
     if in_user.is_teacher:
         teacher = Teacher.objects.get(user=in_user)
     if in_user.is_engineer:

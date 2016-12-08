@@ -5,6 +5,7 @@ Created by Naman Patwari on 10/4/2016.
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
 from .models import MyUser, Student, Teacher, Engineer
+from tinymce.widgets import TinyMCE
 
 class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
@@ -18,7 +19,8 @@ class RegisterStudentForm(forms.Form):
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
     studentPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
-    studentAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
+    #studentAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
+    studentAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)               
     # which languages you need to know
     c_lang = forms.BooleanField(label='C', widget=forms.CheckboxInput, required=False)
     java_lang = forms.BooleanField(label='Java', widget=forms.CheckboxInput, required=False)
@@ -58,7 +60,7 @@ class RegisterTeacherForm(forms.Form):
     teacherPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     teacherEmail =  forms.CharField(label="Email", widget=forms.TextInput, required=False)
     teacherOffice = forms.CharField(label="Office", widget=forms.TextInput, required=False)
-    teacherAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
+    teacherAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)               
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -84,7 +86,7 @@ class RegisterEngineerForm(forms.Form):
     engineerAlmaMater = forms.CharField(label="Alma Mater", widget=forms.TextInput, required=False)               
     engineerPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     engineerEmail =  forms.CharField(label="Email", widget=forms.TextInput, required=False)
-    engineerAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
+    engineerAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)               
 
     def clean_password2(self):
         # Check that the two password entries match
