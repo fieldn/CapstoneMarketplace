@@ -68,6 +68,15 @@ def auth_register(request):
             new_student = Student(user = new_user,
                 phone = form.cleaned_data['studentPhone'],
                 about = form.cleaned_data['studentAbout'],
+                c_lang = form.cleaned_data['c_lang'],
+                java_lang = form.cleaned_data['java_lang'],
+                python_lang = form.cleaned_data['python_lang'],
+                no_lang = form.cleaned_data['no_lang'],
+                front_end_spec = form.cleaned_data['front_end_spec'],
+                back_end_spec = form.cleaned_data['back_end_spec'],
+                full_stack_spec = form.cleaned_data['full_stack_spec'],
+                no_spec = form.cleaned_data['no_spec'],
+                yrs_of_exp = form.cleaned_data['yrs_of_exp'],
                 )
             new_student.save()
 #Register teacher

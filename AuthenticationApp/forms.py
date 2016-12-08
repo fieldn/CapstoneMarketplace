@@ -20,10 +20,23 @@ class RegisterForm(forms.Form):
 
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
-
     student = forms.BooleanField(label='Student', widget=forms.CheckboxInput, required=False)
     studentPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     studentAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
+    # which languages you need to know
+    c_lang = forms.BooleanField(label='C', widget=forms.CheckboxInput, required=False)
+    java_lang = forms.BooleanField(label='Java', widget=forms.CheckboxInput, required=False)
+    python_lang = forms.BooleanField(label='Python', widget=forms.CheckboxInput, required=False)
+    no_lang = forms.BooleanField(label='None', widget=forms.CheckboxInput, required=False)
+
+    # which specialties you have
+    front_end_spec = forms.BooleanField(label='Front end', widget=forms.CheckboxInput, required=False)
+    back_end_spec = forms.BooleanField(label='Back end', widget=forms.CheckboxInput, required=False)
+    full_stack_spec = forms.BooleanField(label='Full Stack', widget=forms.CheckboxInput, required=False)
+    mobile_spec = forms.BooleanField(label='Mobile', widget=forms.CheckboxInput, required=False)
+    no_spec = forms.BooleanField(label='None', widget=forms.CheckboxInput, required=False)
+
+    yrs_of_exp = forms.IntegerField(label='Experience', required=False)
 
     teacher = forms.BooleanField(label='Teacher', widget=forms.CheckboxInput, required=False)
     teacherTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
