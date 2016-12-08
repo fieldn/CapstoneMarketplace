@@ -6,6 +6,9 @@
 	<div class="container theme-showcase" role="main">
 		<div class="jumbotron">
 			<h1>{{ group.name }}</h1>
+			{% if group.project != None %}
+            <h2><a href="/project?name={{ group.project }}">{{ group.project }}</h2>
+			{% endif %}
 			<p>{{ group.description }}</p>
 			{% if userIsMember %}
 			<a href="/group/unjoin?name={{ group.name }}" class="btn btn-default">Unjoin this Group</a>
@@ -33,5 +36,30 @@
 			</table>
 		</div>
 	</div>
+
+	{% if group.project == None %}
+    <div class="container">
+		<div class="table-responsive">
+			<table class="table table-striped sortable">
+				<thead>
+					<tr>
+						<th>Suggested Projects</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for project in projects %}
+					<tr>
+                        <td><a href="/project?name={{ project.name }}">{{ project.name }}</a></td>
+                        <td>{{ project.description }}</td>
+                        <td><a href="/company?name={{ project.company.name }}">{{ project.company.name }}</a></td>
+                        <td><a href="/group/accept?group={{ group.name }}&project={{ project.name }}" class="btn btn-default">Accept this Project</a></td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% endif %}
+
 
 {% endblock %}

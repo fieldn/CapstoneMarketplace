@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.contrib import messages
 
 
-from .forms import LoginForm, RegisterForm, UpdateForm, UpdateStudentForm, UpdateTeacherForm, UpdateEngineerForm
+from .forms import LoginForm, RegisterTeacherForm, RegisterStudentForm, RegisterEngineerForm, UpdateForm, UpdateStudentForm, UpdateTeacherForm, UpdateEngineerForm
 from .models import MyUser, Student, Teacher, Engineer
 
 # Auth Views
@@ -44,50 +44,30 @@ def auth_logout(request):
     messages.success(request, 'Success, you are now logged out')
     return render(request, 'index.html')
 
+#simply asks if the user is a student, teacher, or engineer
 def auth_register(request): 
     if request.user.is_authenticated(): 
         return HttpResponseRedirect("/")
+    return render(request, 'register.html')
 
-    form = RegisterForm(request.POST or None)
+#Register teacher
+def register_teacher(request):
+    print "getting here to teacher"
+    form = RegisterTeacherForm(request.POST or None)
     if form.is_valid():
         new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
             password=form.cleaned_data["password2"], 
             first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
-            is_student=form.cleaned_data['student'],
-            is_teacher=form.cleaned_data['teacher'],
-            is_engineer=form.cleaned_data['engineer'],
+            is_teacher=True,
         )
-
         new_user.save()
-
-        #Also registering students
-        if new_user.is_student == True:
-            new_student = Student(user = new_user,
-                phone = form.cleaned_data['studentPhone'],
-                about = form.cleaned_data['studentAbout'],
-                )
-            new_student.save()
-#Register teacher
-        elif new_user.is_teacher == True:
-            new_teacher = Teacher(user = new_user,
-                title = form.cleaned_data['teacherTitle'],
-                phone = form.cleaned_data['teacherPhone'],
-                email = form.cleaned_data['teacherEmail'],
-                office = form.cleaned_data['teacherOffice'],
-                about = form.cleaned_data['teacherAbout'],
-                )
-            new_teacher.save()
-
-        #Register engineer
-        elif new_user.is_engineer == True:
-            new_engineer = Engineer(user = new_user,
-                title = form.cleaned_data['engineerTitle'],
-                phone = form.cleaned_data['engineerPhone'],
-                email = form.cleaned_data['engineerEmail'],
-                almaMater = form.cleaned_data['engineerAlmaMater'],
-                about = form.cleaned_data['engineerAbout'],
-                )
-            new_engineer.save()
+        new_teacher = Teacher(user = new_user,
+            title = form.cleaned_data['teacherTitle'],
+            phone = form.cleaned_data['teacherPhone'],
+            office = form.cleaned_data['teacherOffice'],
+            about = form.cleaned_data['teacherAbout'],
+            )
+        new_teacher.save()
 
         login(request, new_user)
         messages.success(request, 'Success! Your account was created.')
@@ -95,7 +75,80 @@ def auth_register(request):
 
     context = {
         "form": form,
-        "page_name" : "Register",
+        "page_name" : "Register Teacher",
+        "button_value" : "Register",
+        "links" : ["login"],
+        }
+    return render(request, 'auth_form.html', context)
+
+#Register student
+def register_student(request):
+    form = RegisterStudentForm(request.POST or None)
+    if form.is_valid():
+        print 'DATA CAME BACK:'
+        print form.cleaned_data['firstname']
+        print form.cleaned_data['lastname']
+        new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
+            password=form.cleaned_data["password2"], 
+            first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
+            is_student=True,
+        )
+        new_user.save()
+        new_student = Student(user = new_user,
+            phone = form.cleaned_data['studentPhone'],
+            about = form.cleaned_data['studentAbout'],
+            c_lang = form.cleaned_data['c_lang'],
+            java_lang = form.cleaned_data['java_lang'],
+            python_lang = form.cleaned_data['python_lang'],
+            no_lang = form.cleaned_data['no_lang'],
+            front_end_spec = form.cleaned_data['front_end_spec'],
+            back_end_spec = form.cleaned_data['back_end_spec'],
+            full_stack_spec = form.cleaned_data['full_stack_spec'],
+            no_spec = form.cleaned_data['no_spec'],
+            yrs_of_exp = form.cleaned_data['yrs_of_exp'],
+            )
+        new_student.save()
+        
+        login(request, new_user)
+        messages.success(request, 'Success! Your account was created.')
+        return render(request, 'index.html')
+
+    context = {
+        "form": form,
+        "page_name" : "Register Student",
+        "button_value" : "Register",
+        "links" : ["login"],
+        }
+    return render(request, 'auth_form.html', context)
+
+#Register engineer
+def register_engineer(request):
+    form = RegisterEngineerForm(request.POST or None)
+    if form.is_valid():
+        print 'DATA CAME BACK:'
+        print form.cleaned_data['firstname']
+        print form.cleaned_data['lastname']
+        new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
+            password=form.cleaned_data["password2"], 
+            first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
+            is_engineer=True,
+        )
+        new_user.save()
+        new_engineer = Engineer(user = new_user,
+            title = form.cleaned_data['engineerTitle'],
+            phone = form.cleaned_data['engineerPhone'],
+            almaMater = form.cleaned_data['engineerAlmaMater'],
+            about = form.cleaned_data['engineerAbout'],
+            )
+        new_engineer.save()
+
+        login(request, new_user)
+        messages.success(request, 'Success! Your account was created.')
+        return render(request, 'index.html')
+
+    context = {
+        "form": form,
+        "page_name" : "Register Engineer",
         "button_value" : "Register",
         "links" : ["login"],
         }
@@ -142,6 +195,7 @@ def view_profile(request):
     teacher = None
     if in_user.is_student:
         student = Student.objects.get(user=in_user)
+        print student.about
     if in_user.is_teacher:
         teacher = Teacher.objects.get(user=in_user)
     if in_user.is_engineer:

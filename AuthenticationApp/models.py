@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save
+from tinymce.models import HTMLField
 
 # Create your models here.
 class MyUserManager(BaseUserManager):
@@ -120,12 +121,23 @@ class Student(models.Model):
         blank=True,
         )
 
-    about = models.CharField(
-        max_length=250,
-        null=True,
-        blank=True,
-        )
+    about = HTMLField()
     
+    # which languages you need to know
+    c_lang = models.BooleanField(default=False)
+    java_lang = models.BooleanField(default=False)
+    python_lang = models.BooleanField(default=False)
+    no_lang = models.BooleanField(default=True)
+
+    # which specialties you have
+    front_end_spec = models.BooleanField(default=False)
+    back_end_spec = models.BooleanField(default=False)
+    full_stack_spec = models.BooleanField(default=False)
+    mobile_spec = models.BooleanField(default=False)
+    no_spec = models.BooleanField(default=True)
+
+    yrs_of_exp = models.IntegerField(default=0)
+
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
 
@@ -160,11 +172,7 @@ class Teacher(models.Model):
         blank=True,
         )
 
-    about = models.CharField(
-        max_length=250,
-        null=True,
-        blank=True,
-        )
+    about = HTMLField()
 
     title = models.CharField(
         max_length=32,
@@ -219,11 +227,7 @@ class Engineer(models.Model):
         blank=True,
         )
 
-    about = models.CharField(
-        max_length=250,
-        null=True,
-        blank=True,
-        )
+    about = HTMLField()
 
     title = models.CharField(
         max_length=32,

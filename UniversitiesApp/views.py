@@ -152,6 +152,10 @@ def addCourse(request):
                 if not request.user.is_teacher:
                     return render(request, 'courseform.html', {'error' : 'Only teachers can create classes!'})
 
+                # make sure the teach is at the university
+                if not request.user in in_university.members.all():
+                    return render(request, 'courseform.html', {'error' : 'Only teachers at the university can create classes!'})
+
                 if in_university.course_set.filter(tag__exact=form.cleaned_data['tag']).exists():
                     return render(request, 'courseform.html', {'error' : 'Error: That course tag already exists at this university!'})
                 new_course = models.Course(tag=form.cleaned_data['tag'],
@@ -182,6 +186,10 @@ def removeCourse(request):
         # make sure that the user is a teacher
         if not request.user.is_teacher:
             return render(request, 'courseform.html', {'error' : 'Only teachers can remove classes!'})
+
+        # make sure the teach is at the university
+        if not request.user in in_university.members.all():
+            return render(request, 'courseform.html', {'error' : 'Only teachers at the university can remove classes!'})
 
         in_course_tag = request.GET.get('course', 'None')
         in_course = in_university.course_set.get(tag__exact=in_course_tag)
