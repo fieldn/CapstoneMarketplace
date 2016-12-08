@@ -10,7 +10,7 @@ class Project(models.Model):
     description = models.CharField(max_length=10000)
     created_at = models.DateTimeField('date created')
     updated_at = models.DateTimeField('date updated')
-    company = models.ForeignKey(Company)
+    company = models.ForeignKey(Company, default=None)
 
     # TODO Task 3.5: Add fields for project qualifications (minimum required: programming language, years of experience, speciality)
 
