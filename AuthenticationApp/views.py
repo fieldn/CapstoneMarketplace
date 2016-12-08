@@ -67,7 +67,6 @@ def register_teacher(request):
         new_teacher = Teacher(user = new_user,
             title = form.cleaned_data['teacherTitle'],
             phone = form.cleaned_data['teacherPhone'],
-            email = form.cleaned_data['teacherEmail'],
             office = form.cleaned_data['teacherOffice'],
             about = form.cleaned_data['teacherAbout'],
             )
@@ -141,7 +140,6 @@ def register_engineer(request):
         new_engineer = Engineer(user = new_user,
             title = form.cleaned_data['engineerTitle'],
             phone = form.cleaned_data['engineerPhone'],
-            email = form.cleaned_data['engineerEmail'],
             almaMater = form.cleaned_data['engineerAlmaMater'],
             about = form.cleaned_data['engineerAbout'],
             )
