@@ -187,6 +187,10 @@ def removeCourse(request):
         if not request.user.is_teacher:
             return render(request, 'courseform.html', {'error' : 'Only teachers can remove classes!'})
 
+        # make sure the teach is at the university
+        if not request.user in in_university.members.all():
+            return render(request, 'courseform.html', {'error' : 'Only teachers at the university can remove classes!'})
+
         in_course_tag = request.GET.get('course', 'None')
         in_course = in_university.course_set.get(tag__exact=in_course_tag)
         in_course.delete()
