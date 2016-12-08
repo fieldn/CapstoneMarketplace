@@ -65,3 +65,39 @@ def addProject(request):
         # render error page if user is not logged in
     return render(request, 'autherror.html')
 
+def getBookmarks(request):
+    bookmark_list = models.Bookmark.objects.filter(user__exact = request.user)
+    return render(request, 'bookmarks.html', {
+        'bookmarks': bookmark_list,
+    })
+
+def addBookmark(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        in_project = models.Project.objects.get(name__exact=in_name)
+
+        new_bookmark = models.Bookmark(user=request.user,
+            project=in_project)
+        new_bookmark.save()
+
+        context = {'name': in_name,
+            'bookmarked' : True,
+            }
+
+        return render(request, 'project.html', context)
+    return render(request, 'autherror.html')
+
+def removeBookmark(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        in_project = models.Project.objects.get(name__exact=in_name)
+
+        bookmark = models.Bookmark.objects.filter(projet=in_project)
+        bookmark.delete()
+
+        context = {'name': in_name,
+            'bookmarked' : False,
+            }
+
+        return render(request, 'project.html', context)
+    return render(request, 'autherror.html')
