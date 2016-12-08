@@ -34,7 +34,11 @@ def getGroupForm(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
         all_courses = request.user.course_set.all()
+        if len(all_courses) == 0:
+            return render(request, 'classerror.html')
+        form = GroupForm()
         context = {
+                "form" : form,
                 "course_list" : all_courses
                 }
         return render(request, 'groupform.html', context)
@@ -42,18 +46,34 @@ def getGroupForm(request):
     return render(request, 'autherror.html')
 
 def getGroupFormSuccess(request):
+    print "Getting here"
     if request.user.is_authenticated():
         if request.method == 'POST':
             form = forms.GroupForm(request.POST)
             if form.is_valid():
                 if models.Group.objects.filter(name__exact=form.cleaned_data['name']).exists():
-                    return render(request, 'groupform.html', {'error' : 'Error: That Group name already exists!'})
-                new_group = models.Group(name=form.cleaned_data['name'], description=form.cleaned_data['description'], project='None', members=request.user)
+                    all_courses = request.user.course_set.all()
+                    return render(request, 'groupform.html', {'error' : 'Error: That Group name already exists!', "course_list" : all_courses })
+                print form.__dict__
+                new_group = models.Group(
+                        name=form.cleaned_data['name'], 
+                        description=form.cleaned_data['description'], 
+                        project=None, 
+                        course=models.Course.objects.filter(name__exact=form.cleaned_data['course']).get())
                 new_group.save()
+                new_group.members.add(request.user)
+                for item in form.cleaned_data['members'].split('\n'):
+                    try:
+                        person = models.MyUser.objects.filter(email__exact=item).get()
+                        new_group.members.add(person)
+                    except:
+                        None
                 context = {
                     'name' : form.cleaned_data['name'],
                 }
                 return render(request, 'groupformsuccess.html', context)
+            else:
+                print "form not valid."
         else:
             form = forms.GroupForm()
         return render(request, 'groupform.html')
