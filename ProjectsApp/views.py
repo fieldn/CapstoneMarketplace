@@ -22,7 +22,11 @@ def getProject(request):
 
 def getProjectForm(request):
     if request.user.is_authenticated():
-        return render(request, 'projectform.html')
+        form = ProjectForm(request.POST or None)
+        context = {
+            'form': form,
+        }
+        return render(request, 'projectform.html', context)
     # render error page if user is not logged in
     return render(request, 'autherror.html')
 
@@ -50,18 +54,66 @@ def addProject(request):
 
                 # create a new project
                 new_project = Project(name=name,
-                    description= form.cleaned_data['description'],
+                    description = form.cleaned_data['description'],
                     created_at = datetime.now(),
                     updated_at = datetime.now(),
                     company = request.user.company_set.all()[0],
+                    yrs_of_exp = form.cleaned_data['combined_years_of_experience'],
+                    c_lang = ('C' in ','.join(form.cleaned_data['languages'])),
+                    java_lang = ('Java' in ','.join(form.cleaned_data['languages'])),
+                    python_lang = ('Python' in ','.join(form.cleaned_data['languages'])),
+                    no_lang = ('None' in ','.join(form.cleaned_data['languages'])),
+                    front_end_spec = ('Front_end' in ','.join(form.cleaned_data['specialty'])),
+                    back_end_spec = ('Back_end' in ','.join(form.cleaned_data['specialty'])),
+                    full_stack_spec = ('Full_stack' in ','.join(form.cleaned_data['specialty'])),
+                    mobile_spec = ('Mobile' in ','.join(form.cleaned_data['specialty'])),
+                    no_spec = ('None' in ','.join(form.cleaned_data['specialty'])),
                     )
                 new_project.save()
                 return render(request, 'projects.html')
             else:
-                return render(request, 'projectform.html', {'error' : 'Undefined Error!'})
+                return render(request, 'projectform.html', {'error' : 'Form was invalid. All fields need to be filled out'})
         else:
             form = forms.ProjectForm()
             return render(request, 'projectform.html')
         # render error page if user is not logged in
+    return render(request, 'autherror.html')
+
+
+def getBookmarks(request):
+    bookmark_list = models.Bookmark.objects.filter(user__exact = request.user)
+    return render(request, 'bookmarks.html', {
+        'bookmarks': bookmark_list,
+    })
+
+def addBookmark(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        in_project = models.Project.objects.get(name__exact=in_name)
+
+        new_bookmark = models.Bookmark(user=request.user,
+            project=in_project)
+        new_bookmark.save()
+
+        context = {'name': in_name,
+            'bookmarked' : True,
+            }
+
+        return render(request, 'project.html', context)
+    return render(request, 'autherror.html')
+
+def removeBookmark(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        in_project = models.Project.objects.get(name__exact=in_name)
+
+        bookmark = models.Bookmark.objects.filter(projet=in_project)
+        bookmark.delete()
+
+        context = {'name': in_name,
+            'bookmarked' : False,
+            }
+
+        return render(request, 'project.html', context)
     return render(request, 'autherror.html')
 
