@@ -46,7 +46,6 @@ def getGroupForm(request):
     return render(request, 'autherror.html')
 
 def getGroupFormSuccess(request):
-    print "Getting here"
     if request.user.is_authenticated():
         if request.method == 'POST':
             form = forms.GroupForm(request.POST)
