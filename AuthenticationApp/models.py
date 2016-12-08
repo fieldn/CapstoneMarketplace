@@ -126,6 +126,21 @@ class Student(models.Model):
         blank=True,
         )
     
+    # which languages you need to know
+    c_lang = models.BooleanField(default=False)
+    java_lang = models.BooleanField(default=False)
+    python_lang = models.BooleanField(default=False)
+    no_lang = models.BooleanField(default=True)
+
+    # which specialties you have
+    front_end_spec = models.BooleanField(default=False)
+    back_end_spec = models.BooleanField(default=False)
+    full_stack_spec = models.BooleanField(default=False)
+    mobile_spec = models.BooleanField(default=False)
+    no_spec = models.BooleanField(default=True)
+
+    yrs_of_exp = models.IntegerField(default=0)
+
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
 
