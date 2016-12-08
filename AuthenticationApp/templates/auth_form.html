@@ -1,16 +1,19 @@
 {% extends "body.html" %}
 
-{% block head_title %}{{ page_name }} | {% endblock %}
+{% block head_title %} {{ page_name }} | {% endblock %}
 
 {% block content %}
 
+<br>
 <div class="container" role="main">
 	<div class="panel panel-default">
-		<form method="POST" class="panel-body validate"> {% csrf_token %}
-			{{ form.as_p }}
-			{{ form2.as_p }}
-			<input type="submit" class='btn btn-primary' value="{{ button_value }}">
-		</form>
+		<div class="jumbotron" style="margin-bottom:0px">
+			<h1>{{ page_name }}</h1>
+			<form method="POST" class="panel-body validate"> {% csrf_token %}
+				{{ form.as_p }}
+				<input type="submit" class='btn btn-primary' value="{{ button_value }}">
+			</form>
+		</div>
 	</div>
 </div>
 

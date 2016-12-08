@@ -1,0 +1,32 @@
+{% extends "body.html" %}
+
+{% block content %}
+
+<br>
+<div class="container" role="main">
+	<div class="panel panel-default">
+		<div class="jumbotron" style="margin-bottom:0px">
+			<h1 class="display-3">Welcome to Registration!</h1>
+			<h2 class="display-3">Are you a ...</h2>
+			<br>
+			<br>
+			<br>
+			<br>
+			<div class="container">
+				<div class="row jumbotron-area">
+					<div class="col-md-4">
+						<p class="text-center"><a href="/register_student" class="btn btn-primary btn-lg" role="button">Student</a></p>
+					</div>
+					<div class="col-md-4">
+						<p class="text-center"><a href="/register_teacher" class="btn btn-primary btn-lg" role="button">Teacher</a></p>
+					</div>
+					<div class="col-md-4">
+						<p class="text-center"><a href="/register_engineer" class="btn btn-primary btn-lg" role="button">Engineer</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
