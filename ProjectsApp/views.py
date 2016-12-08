@@ -120,7 +120,7 @@ def removeBookmark(request):
         in_name = request.GET.get('name', 'None')
         in_project = models.Project.objects.get(name__exact=in_name)
 
-        bookmark = models.Bookmark.objects.filter(projet=in_project)
+        bookmark = models.Bookmark.objects.filter(project=in_project)
         bookmark.delete()
 
         context = {'name': in_name,
