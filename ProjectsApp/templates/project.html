@@ -1,18 +1,46 @@
 {% extends "body.html" %}
-
 {% block content %}
-	
-	<!-- Content -->
 	<div class="container theme-showcase" role="main">
 		<div class="jumbotron">
-            <h1>{{ name }}</h1>
-			<p>Description</p>
+            <h1>{{ project.name }}</h1>
+			<p>{{ project.description }}</p>
+            <br>
+			<p>Hosted by {{ project.company }}</p>
+            <p>Requires knowledge of:
+				<ul id=list></ul>
+            </p>
+			<p>Needs at least {{ project.yrs_of_exp }} years of experience.</p>
+			<p>Requires the following specialties:
+				<ul id=list2></ul>
+            </p>
             {% if bookmarked %}
-            <a href="/bookmark/remove?name={{ name }}" class="btn btn-default">Unbookmark</a>
+                <a href="/bookmark/remove?name={{ project.name }}" class="btn btn-default">Unbookmark</a>
             {% else %}
-            <a href="/bookmark/add?name={{ name }}" class="btn btn-default">Bookmark</a>
+                <a href="/bookmark/add?name={{ project.name }}" class="btn btn-default">Bookmark</a>
             {% endif %}
+    <script>
+        document.getElementById("list").innerHTML = ""
+        if ("{{project.c_lang}}" === "True")
+            document.getElementById("list").innerHTML += "<li>C</li>"
+        if ("{{project.java_lang}}" === "True")
+            document.getElementById("list").innerHTML += "<li>Java</li>"
+        if ("{{project.python_lang}}" === "True")
+            document.getElementById("list").innerHTML += "<li>Python</li>"
+        if ("{{project.no_lang}}" === "True")
+            document.getElementById("list").innerHTML += "<li>No languages!</li>"
+
+        document.getElementById("list2").innerHTML = ""
+        if ("{{project.front_end_spec}}" === "True")
+			document.getElementById("list2").innerHTML += "<li>Front End</li>"
+        if ("{{project.back_end_spec}}" === "True")
+			document.getElementById("list2").innerHTML += "<li>Back End</li>"
+        if ("{{project.full_stack_spec}}" === "True")
+			document.getElementById("list2").innerHTML += "<li>Full Stack</li>"
+        if ("{{project.mobile_spec}}" === "True")
+			document.getElementById("list2").innerHTML += "<li>Mobile Dev</li>"
+        if ("{{project.no_spec}}" === "True")
+			document.getElementById("list2").innerHTML += "<li>No specialties!</li>"
+    </script>
 		</div>
 	</div>
-
 {% endblock %}

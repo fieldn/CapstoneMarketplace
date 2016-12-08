@@ -8,13 +8,15 @@
 			<table class="table table-striped sortable">
 				<thead>
 					<tr>
-						<th>Bookmarks</th>
+						<th>Bookmark</th>
+						<th>Project Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for bookmark in bookmarks %}
 					<tr>
-						<td>{{ bookmark.project.name }}</td>
+                        <td><a href="/project?name={{ bookmark.project.name }}">{{ bookmark.project.name }}</a></td>
+                        <td>{{ bookmark.project.description }}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
