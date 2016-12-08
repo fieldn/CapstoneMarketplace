@@ -21,4 +21,3 @@ class UpdateProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ('description','c_lang','java_lang','python_lang','no_lang','front_end_spec','back_end_spec','full_stack_spec','mobile_spec','no_spec','yrs_of_exp')
-        #exclude = ('description', '''name', 'company', 'created_at', 'updated_at')

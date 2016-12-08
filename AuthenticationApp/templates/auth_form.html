@@ -15,6 +15,7 @@
 			<h1>{{ page_name }}</h1>
 			<form method="POST" class="panel-body validate"> {% csrf_token %}
 				{{ form.as_p }}
+				{{ form2.as_p }}
 				<input type="submit" class='btn btn-primary' value="{{ button_value }}">
 			</form>
 		</div>

@@ -34,8 +34,11 @@ def getProject(request):
     context = {
         'project': in_project,
         'bookmarked': bookmarked,
-        'can_delete': in_project.company == request.user.company_set.all()[0],
     }
+    if request.user.is_engineer:
+        context['can_delete'] = in_project.company == request.user.company_set.all()[0]
+    else:
+        context['can_delete'] = False
 
     return render(request, 'project.html', context)
 

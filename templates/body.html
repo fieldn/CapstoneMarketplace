@@ -40,12 +40,12 @@
 						<ul class="dropdown-menu">
 						{% if user.is_student == True %}
 							<li><a href="/group/form">Create Group</a></li>
-						{% elif user.is_engineer == True %}
+						{% if user.is_engineer == True %}
 							<li><a href="/project/form">Create Project</a></li>
-						{% elif user.is_admin == True %}
+						{% if user.is_admin == True %}
 							<li><a href="/university/form">Create University</a></li>
 							<li><a href="/company/form">Create Company</a></li>
-						{% elif user.is_teacher == True %}
+						{% if user.is_teacher == True %}
 							<li><a href="/university/all">Create Course</a></li>
 						{% endif %}
 						</ul>
