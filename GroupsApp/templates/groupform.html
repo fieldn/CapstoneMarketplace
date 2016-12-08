@@ -12,14 +12,47 @@
 				{% csrf_token %}
 				<label for="name">Name</label>
 				<h6 style="color:red">{{ error }}</h6>
-				<input type="text" name="name" id="name" placeholder="Name" class="form-control" data-bvalidator="required" data-bvalidator-msg="Name Required">
+				<input type="text" name="name" id="name" placeholder="Group Name" class="form-control" 
+				data-bvalidator="required" data-bvalidator-msg="Name Required">
 				<br>
-				<label for="description">Group Description</label>
-				<input type="text" name="description" id="description" placeholder="Please provide a description of the group and its goals." class="form-control" data-bvalidator="required" data-bvalidator-msg="Description Required">
-				<br>
-				<input type="submit" value="Submit" class="btn btn-primary">
+				<div class="form-group">
+					<label for="description">Description</label>
+				    <textarea class="form-control" rows="5" id="comment" 
+						placeholder="Please provide a description of the group and its goals." 
+						data-bvalidator="required" data-bvalidator-msg="Description Required"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="course">Course</label>
+					<select class="form-control" id="course">
+					{% for item in course_list %}
+					<option>{{ item.get_full_name }}</option>
+					{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="members">Members</label>
+				    <textarea class="form-control" rows="5" id="comment" 
+						placeholder="Please enter the emails of all students you'd like to add to the group, one email per line." 
+						data-bvalidator="required" data-bvalidator-msg="Description Required"></textarea>
+				</div>
+				<input type="submit" value="Create Group" class="btn btn-primary">
 			</form>
 		</div>
 	</div>
+{% endblock %}
 
-	{% endblock %}
+	<!--
+<div class="container" role="main">
+	<div class="panel panel-default">
+		<div class="jumbotron">
+			<h3 style="margin: 0px; padding: 0px;">Create Group</h3>
+		</div>
+		<form method="POST" class="panel-body validate"> {% csrf_token %}
+			{{ form.as_p }}
+			{{ form2.as_p }}
+			<input type="submit" class='btn btn-primary' value="{{ button_value }}">
+		</form>
+	</div>
+</div>
+-->
+

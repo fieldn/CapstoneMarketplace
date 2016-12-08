@@ -30,8 +30,9 @@ def getProject(request):
     except:
         bookmarked = False
 
-    context = {'name': in_name,
-        'bookmarked' : bookmarked,
+    context = {
+        'project': in_project, 
+        'bookmarked': bookmarked,
         }
 
     return render(request, 'project.html', context)
@@ -108,7 +109,8 @@ def addBookmark(request):
             project=in_project)
         new_bookmark.save()
 
-        context = {'name': in_name,
+        context = {
+			'project': in_project, 
             'bookmarked' : True,
             }
 
@@ -123,7 +125,8 @@ def removeBookmark(request):
         bookmark = models.Bookmark.objects.filter(project=in_project)
         bookmark.delete()
 
-        context = {'name': in_name,
+        context = {
+			'project': in_project, 
             'bookmarked' : False,
             }
 

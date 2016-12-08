@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 from . import models
 from . import forms
+from .forms import GroupForm
 
 def getGroups(request):
     if request.user.is_authenticated():
@@ -31,7 +32,12 @@ def getGroup(request):
 
 def getGroupForm(request):
     if request.user.is_authenticated():
-        return render(request, 'groupform.html')
+        in_name = request.GET.get('name', 'None')
+        all_courses = request.user.course_set.all()
+        context = {
+                "course_list" : all_courses
+                }
+        return render(request, 'groupform.html', context)
     # render error page if user is not logged in
     return render(request, 'autherror.html')
 
@@ -42,7 +48,7 @@ def getGroupFormSuccess(request):
             if form.is_valid():
                 if models.Group.objects.filter(name__exact=form.cleaned_data['name']).exists():
                     return render(request, 'groupform.html', {'error' : 'Error: That Group name already exists!'})
-                new_group = models.Group(name=form.cleaned_data['name'], description=form.cleaned_data['description'])
+                new_group = models.Group(name=form.cleaned_data['name'], description=form.cleaned_data['description'], project='None', members=request.user)
                 new_group.save()
                 context = {
                     'name' : form.cleaned_data['name'],
