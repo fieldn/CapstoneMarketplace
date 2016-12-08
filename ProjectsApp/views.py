@@ -5,9 +5,14 @@ Created by Harris Christiansen on 10/02/16.
 from django.shortcuts import render
 
 from . import models
+from .forms import ProjectForm
+from AuthenticationApp.models import Engineer
+from .models import Project
+
+from datetime import datetime
 
 def getProjects(request):
-	projects_list = models.Project.objects.all()
+	projects_list = Project.objects.all()
 	return render(request, 'projects.html', {
         'projects': projects_list,
     })
@@ -24,26 +29,28 @@ def getProjectForm(request):
 def addProject(request):
     if request.user.is_authenticated():
         if request.method == 'POST':
-            form = forms.ProjectForm(request.POST)
+            form = ProjectForm(request.POST)
             if form.is_valid():
-
-                # make sure that the user is a teacher
+                # make sure that the user is an engineer
                 if not request.user.is_engineer:
                     return render(request, 'projectform.html', {'error' : 'Only engineers can create classes!'})
 
                 # make sure the engineer belongs to a company
-                engineer = models.Engineer.objects.get(user__exact=request.user)
+                engineer = Engineer.objects.get(user__exact=request.user)
                 if len(request.user.company_set.all()) == 0:
                     return render(request, 'projectform.html', {'error' : 'Engineer must be associated with a company!'})
 
                 # check that the project's name is unique
                 name = form.cleaned_data['name']
-                if models.Project.objects.get(name__exact=name).exists():
-                    return render(request, 'projectform.html', {'error' : 'Error: That project name already exists!'})
+                try:
+                    if Project.objects.get(name__exact=name).exists():
+                        return render(request, 'projectform.html', {'error' : 'Error: That project name already exists!'})
+                except:
+                    pass
 
                 # create a new project
-                new_project = models.Project(name=name,
-                    description=cleaned_data['description'],
+                new_project = Project(name=name,
+                    description= form.cleaned_data['description'],
                     created_at = datetime.now(),
                     updated_at = datetime.now(),
                     company = request.user.company_set.all()[0],
