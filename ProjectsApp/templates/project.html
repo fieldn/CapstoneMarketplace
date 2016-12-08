@@ -18,6 +18,12 @@
             {% else %}
                 <a href="/bookmark/add?name={{ project.name }}" class="btn btn-default">Bookmark</a>
             {% endif %}
+			{% if can_delete %}
+                <br>
+                <br>
+				<a href="/project/remove?name={{ project.name }}" class="btn btn-default">Delete Project</a>
+            {% endif %}
+
     <script>
         document.getElementById("list").innerHTML = ""
         if ("{{project.c_lang}}" === "True")

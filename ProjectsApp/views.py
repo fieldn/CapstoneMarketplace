@@ -33,9 +33,18 @@ def getProject(request):
     context = {
         'project': in_project, 
         'bookmarked': bookmarked,
-        }
+        'can_delete': in_project.company == request.user.company_set.all()[0],
+    }
 
     return render(request, 'project.html', context)
+
+def removeProject(request):
+    if request.user.is_authenticated():
+        proj_name = request.GET.get('name', 'None')
+        models.Project.objects.get(name__exact=proj_name).delete()
+
+        return render(request, 'projects.html')
+    return render(request, 'autherror.html')
 
 def getProjectForm(request):
     if request.user.is_authenticated():
