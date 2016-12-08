@@ -6,6 +6,9 @@
 	<div class="container theme-showcase" role="main">
 		<div class="jumbotron">
 			<h1>{{ group.name }}</h1>
+			{% if group.project != None %}
+            <h2><a href="/project?name={{ group.project }}">{{ group.project }}</h2>
+			{% endif %}
 			<p>{{ group.description }}</p>
 			{% if userIsMember %}
 			<a href="/group/unjoin?name={{ group.name }}" class="btn btn-default">Unjoin this Group</a>
@@ -34,6 +37,7 @@
 		</div>
 	</div>
 
+	{% if group.project == None %}
     <div class="container">
 		<div class="table-responsive">
 			<table class="table table-striped sortable">
@@ -55,6 +59,7 @@
 			</table>
 		</div>
 	</div>
+	{% endif %}
 
 
 {% endblock %}
