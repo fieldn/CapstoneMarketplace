@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save
+from tinymce.models import HTMLField
 
 # Create your models here.
 class MyUserManager(BaseUserManager):
@@ -120,11 +121,7 @@ class Student(models.Model):
         blank=True,
         )
 
-    about = models.CharField(
-        max_length=250,
-        null=True,
-        blank=True,
-        )
+    about = HTMLField()
     
     # which languages you need to know
     c_lang = models.BooleanField(default=False)
@@ -175,11 +172,7 @@ class Teacher(models.Model):
         blank=True,
         )
 
-    about = models.CharField(
-        max_length=250,
-        null=True,
-        blank=True,
-        )
+    about = HTMLField()
 
     title = models.CharField(
         max_length=32,
@@ -234,11 +227,7 @@ class Engineer(models.Model):
         blank=True,
         )
 
-    about = models.CharField(
-        max_length=250,
-        null=True,
-        blank=True,
-        )
+    about = HTMLField()
 
     title = models.CharField(
         max_length=32,
