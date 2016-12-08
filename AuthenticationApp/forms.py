@@ -11,17 +11,13 @@ class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
-
-class RegisterForm(forms.Form):
-    """A form to creating new users. Includes all the required
-    fields, plus a repeated password."""
+class RegisterStudentForm(forms.Form):
     email = forms.CharField(label='Email', widget=forms.EmailInput, required=True)
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
 
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
-    student = forms.BooleanField(label='Student', widget=forms.CheckboxInput, required=False)
     studentPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     #studentAbout = forms.CharField(label="About", widget=forms.TextInput, required=False)               
     studentAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)               
@@ -40,14 +36,52 @@ class RegisterForm(forms.Form):
 
     yrs_of_exp = forms.IntegerField(label='Experience', required=False)
 
-    teacher = forms.BooleanField(label='Teacher', widget=forms.CheckboxInput, required=False)
+    def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return password2
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        #Check if email exists before
+        try:
+            exists = MyUser.objects.get(email=email)
+            raise forms.ValidationError("This email has already been taken")
+        except MyUser.DoesNotExist:
+            return email
+        except:
+            raise forms.ValidationError("There was an error, please contact us later")
+    
+class RegisterTeacherForm(forms.Form):
     teacherTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
     teacherPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     teacherEmail =  forms.CharField(label="Email", widget=forms.TextInput, required=False)
     teacherOffice = forms.CharField(label="Office", widget=forms.TextInput, required=False)
     teacherAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)               
 
-    engineer = forms.BooleanField(label='Engineer', widget=forms.CheckboxInput, required=False)
+    def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return password2
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        #Check if email exists before
+        try:
+            exists = MyUser.objects.get(email=email)
+            raise forms.ValidationError("This email has already been taken")
+        except MyUser.DoesNotExist:
+            return email
+        except:
+            raise forms.ValidationError("There was an error, please contact us later")
+
+class RegisterEngineerForm(forms.Form):
     engineerTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
     engineerAlmaMater = forms.CharField(label="Alma Mater", widget=forms.TextInput, required=False)               
     engineerPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
