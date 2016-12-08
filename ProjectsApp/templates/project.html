@@ -5,8 +5,13 @@
 	<!-- Content -->
 	<div class="container theme-showcase" role="main">
 		<div class="jumbotron">
-			<h1>Project</h1>
+            <h1>{{ name }}</h1>
 			<p>Description</p>
+            {% if bookmarked %}
+            <a href="/bookmark/remove?name={{ name }}" class="btn btn-default">Unbookmark</a>
+            {% else %}
+            <a href="/bookmark/add?name={{ name }}" class="btn btn-default">Bookmark</a>
+            {% endif %}
 		</div>
 	</div>
 
