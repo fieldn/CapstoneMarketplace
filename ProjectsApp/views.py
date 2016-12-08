@@ -5,9 +5,10 @@ Created by Harris Christiansen on 10/02/16.
 from django.shortcuts import render
 
 from . import models
-from .forms import ProjectForm
+from .forms import ProjectForm, UpdateProjectForm
 from AuthenticationApp.models import Engineer
 from .models import Project
+from django.contrib.auth.decorators import login_required
 
 from datetime import datetime
 
@@ -31,7 +32,7 @@ def getProject(request):
         bookmarked = False
 
     context = {
-        'project': in_project, 
+        'project': in_project,
         'bookmarked': bookmarked,
         'can_delete': in_project.company == request.user.company_set.all()[0],
     }
@@ -45,6 +46,23 @@ def removeProject(request):
 
         return render(request, 'projects.html')
     return render(request, 'autherror.html')
+
+@login_required
+def updateProject(request):
+    proj = models.Project.objects.filter(name=request.GET.get('name', 'None')).first()
+    form = UpdateProjectForm(request.POST or None, instance=proj)
+
+    print form.is_valid()
+
+    if form.is_valid():
+        form.save()
+
+    context = {
+        'form': form,
+        'success': 'Updated successfully',
+    }
+
+    return render(request, 'projectupdate.html', context)
 
 def getProjectForm(request):
     if request.user.is_authenticated():

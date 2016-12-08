@@ -5,8 +5,9 @@
 			<h3 style="margin: 0px; padding: 0px;">Create Project</h3>
 		</div>
 		<div class="panel panel-default">
-			<form method="POST" action="/project/add" class="panel-body"> {% csrf_token %}
+			<form method="POST" class="panel-body"> {% csrf_token %}
 				<h6 style="color:red">{{ error }}</h6>
+				<h6 style="color:green">{{ success }}</h6>
                 {{ form.as_p }}
 				<input type="submit" value="Submit" class="btn btn-primary">
 			</form>
