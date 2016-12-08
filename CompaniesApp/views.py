@@ -26,6 +26,8 @@ def getCompany(request):
         context = {
             'company' : in_company,
             'userIsMember': is_member,
+            'userIsEngineer': request.user.is_engineer,
+            'userCompanyCount': len(request.user.company_set.all()),
         }
         return render(request, 'company.html', context)
     # render error page if user is not logged in
@@ -44,8 +46,8 @@ def getCompanyFormSuccess(request):
             if form.is_valid():
                 if models.Company.objects.filter(name__exact=form.cleaned_data['name']).exists():
                     return render(request, 'companyform.html', {'error' : 'Error: That company name already exists!'})
-                new_company = models.Company(name=form.cleaned_data['name'], 
-                                             photo=request.FILES['photo'],  
+                new_company = models.Company(name=form.cleaned_data['name'],
+                                             photo=request.FILES['photo'],
                                              description=form.cleaned_data['description'],
                                              website=form.cleaned_data['website'])
                 new_company.save()
@@ -65,13 +67,26 @@ def joinCompany(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
         in_company = models.Company.objects.get(name__exact=in_name)
+
+        """if len(request.user.company_set.all()) > 0:
+            # TODO show error message when trying to join >1 company
+            context = {
+                'company' : in_company,
+                'userIsMember': False,
+                'error' : 'You can only be a member of one company at at time!',
+                }
+            return render(request, 'company.html', context)"""
+
         in_company.members.add(request.user)
-        in_company.save();
+        in_company.save()
         request.user.company_set.add(in_company)
+
         request.user.save()
         context = {
             'company' : in_company,
             'userIsMember': True,
+            'userIsEngineer': request.user.is_engineer,
+            'userCompanyCount': len(request.user.company_set.all()),
         }
         return render(request, 'company.html', context)
     return render(request, 'autherror.html')
@@ -87,6 +102,8 @@ def unjoinCompany(request):
         context = {
             'company' : in_company,
             'userIsMember': False,
+            'userIsEngineer': request.user.is_engineer,
+            'userCompanyCount': len(request.user.company_set.all()),
         }
         return render(request, 'company.html', context)
     return render(request, 'autherror.html')

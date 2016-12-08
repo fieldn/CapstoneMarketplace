@@ -11,8 +11,8 @@ from UniversitiesApp.models import Course
 class Group(models.Model):
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
-    project = models.ForeignKey(Project)
-    course = models.ForeignKey(Course)
+    project = models.ForeignKey(Project, default=None)
+    course = models.ForeignKey(Course, default=None)
     members = models.ManyToManyField(MyUser)
     
     def __str__(self):
