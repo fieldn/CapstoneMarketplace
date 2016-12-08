@@ -18,7 +18,23 @@ def getProjects(request):
     })
 
 def getProject(request):
-	return render(request, 'project.html')
+    in_name = request.GET.get('name', 'None')
+
+    # check if the user has bookmarked the project
+    in_project = models.Project.objects.get(name__exact=in_name)
+    try:
+        if models.Bookmark.objects.filter(project=in_project,).filter(user=request.user):
+            bookmarked = True
+        else:
+            bookmarked = False
+    except:
+        bookmarked = False
+
+    context = {'name': in_name,
+        'bookmarked' : bookmarked,
+        }
+
+    return render(request, 'project.html', context)
 
 def getProjectForm(request):
     if request.user.is_authenticated():
@@ -54,9 +70,7 @@ def addProject(request):
 
                 # create a new project
                 new_project = Project(name=name,
-                    description = form.cleaned_data['description'],
-                    created_at = datetime.now(),
-                    updated_at = datetime.now(),
+                    description= form.cleaned_data['description'], created_at = datetime.now(), updated_at = datetime.now(),
                     company = request.user.company_set.all()[0],
                     yrs_of_exp = form.cleaned_data['combined_years_of_experience'],
                     c_lang = ('C' in ','.join(form.cleaned_data['languages'])),
@@ -78,7 +92,6 @@ def addProject(request):
             return render(request, 'projectform.html')
         # render error page if user is not logged in
     return render(request, 'autherror.html')
-
 
 def getBookmarks(request):
     bookmark_list = models.Bookmark.objects.filter(user__exact = request.user)
@@ -116,4 +129,3 @@ def removeBookmark(request):
 
         return render(request, 'project.html', context)
     return render(request, 'autherror.html')
-
