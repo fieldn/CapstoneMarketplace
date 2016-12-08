@@ -4,21 +4,21 @@
 	<!-- Content -->
     <div class="container theme-showcase" role="main">
 		<div class="jumbotron" style="background-color:#D9F9E7">
-			<div class="container">
-				<div class="row">
-					<div class=".col-xs-6 .col-md-4">
-						<img src="/{{ university.photo }}" alt="University Image" width="150" class="img-responsive"/>
-					</div>
-					<div class=".col-xs-12 .col-md-8">
-						<h3>{{ university.name }}</h3>
-					  	<p>{{ university.description }}</p>
-						<h5><a href="{{ university.website }}">Website</a></h5>
-						{% if userIsMember %}
-						<a href="/university/unjoin?name={{ university.name }}" class="btn btn-default">Leave this University</a>
-						{% else %}
-						<a href="/university/join?name={{ university.name }}" class="btn btn-default">Join this University</a>
-						{% endif %}
-					</div>
+			<h1 class="col-lg-offset-3"> {{ university.name }}</h1>
+
+			<div class="row">
+				<div class="col-md-3">
+					<img src="/{{ university.photo }}" alt="University Image" width="150" class="img-responsive"/>
+				</div>
+
+				<div class="col-md-9">
+					<p>{{ university.description }}</p>
+					<h5><a href="{{ university.website }}">Website</a></h5>
+					{% if userIsMember %}
+					<a href="/university/unjoin?name={{ university.name }}" class="btn btn-default">Leave this University</a>
+					{% else %}
+					<a href="/university/join?name={{ university.name }}" class="btn btn-default">Join this University</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>
