@@ -1,0 +1,45 @@
+{% extends "body.html" %}
+
+{% block head_title %}{{ page_name }} | {% endblock %}
+
+{% block content %}
+
+<div class="container" role="main">
+        <h2> {{ user.get_full_name}} </h2>
+        <h4> <a href="mailto:user.email">{{ user.email }}</a> </h4>
+            {% if user.is_student  and student != None %}
+            About: {{ student.about }}
+            <p>
+            <b>Contact Info:</b>
+            <p>
+            Phone: {{ student.phone }}
+            {% endif %}
+            {% if user.is_teacher and teacher != None %}
+            <p>
+            Title: {{ teacher.title }}
+            <p>
+            About: {{ teacher.about }}
+            <p>
+            <b>Contact Info:</b>
+            <p>
+            Phone: {{ teacher.phone }}
+            <p>
+            Office: {{ teacher.office }}
+            <p>
+            {% endif %}
+            {% if user.is_engineer and engineer != None %}
+            <p>
+            Title: {{ engineer.title }}
+            <p>
+            Alma Mater: {{ engineer.almaMater }}
+            <p>
+            About: {{ engineer.about }}
+            <p>
+            <b>Contact Info:</b>
+            <p>
+            Phone: {{ engineer.phone }}
+            <p>
+            {% endif %}
+</div>
+
+{% endblock %}

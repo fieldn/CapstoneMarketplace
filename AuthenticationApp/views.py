@@ -44,12 +44,15 @@ def auth_logout(request):
     messages.success(request, 'Success, you are now logged out')
     return render(request, 'index.html')
 
-def auth_register(request):
-    if request.user.is_authenticated():
+def auth_register(request): 
+    if request.user.is_authenticated(): 
         return HttpResponseRedirect("/")
 
     form = RegisterForm(request.POST or None)
     if form.is_valid():
+        print 'DATA CAME BACK:'
+        print form.cleaned_data['firstname']
+        print form.cleaned_data['lastname']
         new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
             password=form.cleaned_data["password2"], 
             first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
@@ -67,8 +70,7 @@ def auth_register(request):
                 about = form.cleaned_data['studentAbout'],
                 )
             new_student.save()
-
-        #Register teacher
+#Register teacher
         elif new_user.is_teacher == True:
             new_teacher = Teacher(user = new_user,
                 title = form.cleaned_data['teacherTitle'],
@@ -131,3 +133,26 @@ def update_profile(request):
         "links" : ["logout"],
         }
     return render(request, 'auth_form.html', context)
+
+def view_profile(request):
+    # find the user
+    in_name = request.GET.get('user')
+    in_user = MyUser.objects.get(email__exact=in_name)
+
+    # find the information specific to the user's role
+    student = None
+    engineer = None
+    teacher = None
+    if in_user.is_student:
+        student = Student.objects.get(user=in_user)
+    if in_user.is_teacher:
+        teacher = Teacher.objects.get(user=in_user)
+    if in_user.is_engineer:
+        engineer = Engineer.objects.get(user=in_user)
+
+    context = {'user': in_user, 
+            'student' : student,
+            'teacher' : teacher,
+            'engineer' : engineer,
+        }
+    return render(request, 'profile.html', context)
