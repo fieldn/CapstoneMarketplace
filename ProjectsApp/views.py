@@ -39,7 +39,10 @@ def getProject(request):
         'features': features,
     }
     if request.user.is_engineer:
-        context['can_delete'] = in_project.company == request.user.company_set.all()[0]
+        try:
+            context['can_delete'] = in_project.company == request.user.company_set.all()[0]
+        except:
+            context['can_delete'] = False
     else:
         context['can_delete'] = False
 
