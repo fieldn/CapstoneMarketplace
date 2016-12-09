@@ -4,7 +4,7 @@ UniversitiesApp Views
 Created by Jacob Dunbar on 11/5/2016.
 """
 from django.shortcuts import render
-
+from django.contrib import messages
 from . import models
 from . import forms
 
@@ -138,7 +138,7 @@ def courseForm(request):
             }
         return render(request, 'courseform.html', context)
     # render error page if user is not logged in
-    return render(request, 'autherror.html')
+    return render(request, 'autherror.html') 
 
 def addCourse(request):
     if request.user.is_authenticated():
@@ -307,3 +307,35 @@ def removeStudent(request):
         }
         return render(request, 'manage.html', context)
     return render(request, 'autherror.html')
+
+def updateCourse(request):
+    print "update"
+    # for the general data that all users share
+    in_university_name = request.GET.get('name', 'None')
+    in_university = models.University.objects.get(name__exact=in_university_name)
+    in_course_tag = request.GET.get('course', 'None')
+    in_course = in_university.course_set.get(tag__exact=in_course_tag)
+
+    form = forms.UpdateCourseForm(request.POST or None, instance=in_course)
+
+    context = {
+        "form": form,
+        "links" : ["logout"],
+        }
+
+    if form.is_valid():
+        if not in_university.members.filter(email__exact=request.user.email):
+            print in_course.members.all()
+            context['error'] = 'You must be in the university to modify it!'
+            return render(request, 'updatecourseform.html', context)
+
+        if not request.user.is_teacher:
+            context['error'] = 'Only teachers can update classes!'
+            return render(request, 'updatecourseform.html', context)
+
+        form.save()
+        messages.success(request, 'Success: your information was saved.')
+
+    return render(request, 'updatecourseform.html', context)
+
+
