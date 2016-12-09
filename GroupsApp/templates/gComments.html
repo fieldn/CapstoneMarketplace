@@ -44,6 +44,7 @@ function timeDifference(current, previous) {
 	$("#comments").click(e => {
 		const $target = $(e.target)
 		const parentId = e.target.dataset.id
+        const groupId = {{group_id}}
 
 		if (!parentId) return
 
@@ -58,6 +59,7 @@ function timeDifference(current, previous) {
 			$.post('/group/gAddComment', {
 				comment: inputBox.val(),
 				id: parentId,
+                group_id: groupId,
 			}, data => {
 				location.reload()
 			})
