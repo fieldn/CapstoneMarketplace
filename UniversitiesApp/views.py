@@ -4,7 +4,7 @@ UniversitiesApp Views
 Created by Jacob Dunbar on 11/5/2016.
 """
 from django.shortcuts import render
-
+from django.contrib import messages
 from . import models
 from . import forms
 
@@ -307,3 +307,36 @@ def removeStudent(request):
         }
         return render(request, 'manage.html', context)
     return render(request, 'autherror.html')
+
+def updateCourse(request):
+    print "update"
+    # for the general data that all users share
+    in_university_name = request.GET.get('name', 'None')
+    in_university = models.University.objects.get(name__exact=in_university_name)
+    in_course_tag = request.GET.get('course', 'None')
+    in_course = in_university.course_set.get(tag__exact=in_course_tag)
+
+    form = forms.UpdateCourseForm(request.POST or None, instance=in_course)
+
+    if form.is_valid():
+        """
+        if not in_course.members.filter(email__exact=request.user.email):
+            print in_course.members.all()
+            print "not in course"
+            return render(request, 'updatecourseform.html', {'error' : 'You must be in the course to modify it!'})
+        """
+
+        if not request.user.is_teacher:
+            print "not a teacher"
+            return render(request, 'updatecourseform.html', {'error' : 'Only teachers can update classes!'})
+
+        form.save()
+        messages.success(request, 'Success: your information was saved.')
+
+    context = {
+        "form": form,
+        "links" : ["logout"],
+        }
+    return render(request, 'updatecourseform.html', context)
+
+

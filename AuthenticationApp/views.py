@@ -52,7 +52,6 @@ def auth_register(request):
 
 #Register teacher
 def register_teacher(request):
-    print "getting here to teacher"
     form = RegisterTeacherForm(request.POST or None)
     if form.is_valid():
         new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
@@ -85,9 +84,6 @@ def register_teacher(request):
 def register_student(request):
     form = RegisterStudentForm(request.POST or None)
     if form.is_valid():
-        print 'DATA CAME BACK:'
-        print form.cleaned_data['firstname']
-        print form.cleaned_data['lastname']
         new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
             password=form.cleaned_data["password2"], 
             first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
@@ -126,9 +122,6 @@ def register_student(request):
 def register_engineer(request):
     form = RegisterEngineerForm(request.POST or None)
     if form.is_valid():
-        print 'DATA CAME BACK:'
-        print form.cleaned_data['firstname']
-        print form.cleaned_data['lastname']
         new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
             password=form.cleaned_data["password2"], 
             first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
@@ -198,7 +191,6 @@ def view_profile(request):
     teacher = None
     if in_user.is_student:
         student = Student.objects.get(user=in_user)
-        print student.about
     if in_user.is_teacher:
         teacher = Teacher.objects.get(user=in_user)
     if in_user.is_engineer:
