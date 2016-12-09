@@ -78,6 +78,7 @@ function timeDifference(current, previous) {
 				comment: inputBox.val(),
 				id: parentId,
                 group_id: groupId,
+                university: '{{university}}',
 			}, data => {
                 if (data['response'] !== '')
                     $("#response").text(data['response'])
