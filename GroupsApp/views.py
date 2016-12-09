@@ -310,15 +310,11 @@ def featureDone(request):
     if request.user.is_authenticated():
         in_group_name = request.GET.get('group', 'None')
         in_group = models.Group.objects.get(name__exact=in_group_name)
-        in_feat_id = request.GET.get('feat_id', 'None')
-        in_feat = models.Feature.objects.get(pk=in_feat_id)
-        in_group.features.add(in_feat)
-        in_group.save()
-
-        context = {
-            'group' : in_group,
-            'userIsMember': True,
-        }
+        if request.user in in_group.members.all():
+            in_feat_id = request.GET.get('feat_id', 'None')
+            in_feat = models.Feature.objects.get(pk=in_feat_id)
+            in_group.features.add(in_feat)
+            in_group.save()
         return redirect('/group?name=' + in_group_name)
     return render(request, 'autherror.html')
 
@@ -326,10 +322,11 @@ def featureUndone(request):
     if request.user.is_authenticated():
         in_group_name = request.GET.get('group', 'None')
         in_group = models.Group.objects.get(name__exact=in_group_name)
-        in_feat_id = request.GET.get('feat_id', 'None')
-        in_feat = models.Feature.objects.get(pk=in_feat_id)
-        in_group.features.remove(in_feat)
-        in_group.save()
+        if request.user in in_group.members.all():
+            in_feat_id = request.GET.get('feat_id', 'None')
+            in_feat = models.Feature.objects.get(pk=in_feat_id)
+            in_group.features.remove(in_feat)
+            in_group.save()
         return redirect('/group?name=' + in_group_name)
     return render(request, 'autherror.html')
 
