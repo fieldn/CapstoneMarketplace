@@ -3,6 +3,7 @@
 <style>
 .container li { list-style-type: none; border-left: 1px solid lightGray; margin: 0; padding-left: 1em; }
 </style>
+
 <div class="container" role="main" id="comments"></div>
 <div id="data" data-comments="{{comments}}"></div>
 
@@ -54,9 +55,9 @@ function timeDifference(current, previous) {
 		li.append(inputBox)
 		li.append(button) 
 		button.click(e => {
-			$.post('/addcomment', {
+			$.post('/group/gAddComment', {
 				comment: inputBox.val(),
-				id: parentId
+				id: parentId,
 			}, data => {
 				location.reload()
 			})

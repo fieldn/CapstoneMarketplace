@@ -27,6 +27,7 @@ def serialize(c):
 def getComments(request):
     comments_list = list(models.Comment.objects.filter(parent=True))
     j = json.dumps({'list' : map(serialize, comments_list)})
+    print j
     context = {'comments' : j}
     return render(request, 'comments.html', context)
 
