@@ -2,19 +2,19 @@
 
 Created by Harris Christiansen on 10/02/16.
 """
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from . import models
-from .forms import ProjectForm, UpdateProjectForm
+from .forms import ProjectForm, UpdateProjectForm, FeatureForm
 from AuthenticationApp.models import Engineer
-from .models import Project
+from .models import Project, Feature
 from django.contrib.auth.decorators import login_required
 
 from datetime import datetime
 
 def getProjects(request):
-	projects_list = Project.objects.all()
-	return render(request, 'projects.html', {
+    projects_list = Project.objects.all()
+    return render(request, 'projects.html', {
         'projects': projects_list,
     })
 
@@ -31,9 +31,12 @@ def getProject(request):
     except:
         bookmarked = False
 
+    features = in_project.feature_set.all()
+
     context = {
         'project': in_project,
         'bookmarked': bookmarked,
+        'features': features,
     }
     if request.user.is_engineer:
         context['can_delete'] = in_project.company == request.user.company_set.all()[0]
@@ -140,7 +143,7 @@ def addBookmark(request):
         new_bookmark.save()
 
         context = {
-			'project': in_project, 
+            'project': in_project, 
             'bookmarked' : True,
             }
 
@@ -156,9 +159,28 @@ def removeBookmark(request):
         bookmark.delete()
 
         context = {
-			'project': in_project, 
+            'project': in_project, 
             'bookmarked' : False,
             }
 
         return render(request, 'project.html', context)
+    return render(request, 'autherror.html')
+
+def getFeatureForm(request):
+    if request.user.is_authenticated():
+        in_project_name = request.GET.get('name', 'None')
+        in_project = models.Project.objects.filter(name=in_project_name).first()
+        form = None
+        context = {}
+        if request.POST:
+            feat = Feature()
+            form = FeatureForm(request.POST, instance=feat)
+            if form.is_valid():
+                form.save()
+                setattr(feat, 'project', in_project)
+                feat.save()
+                context['success'] = 'Feature ' + feat.name + ' Sucessfully Added!'
+        form = FeatureForm(None)
+        context['form'] = form
+        return render(request, 'projectupdate.html', context)
     return render(request, 'autherror.html')

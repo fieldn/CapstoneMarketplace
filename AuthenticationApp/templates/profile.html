@@ -49,24 +49,32 @@
 					<span><strong>Years of Experience: </strong></span>
 					<span class="label label-success"> {{ student.yrs_of_exp }}</span>
 					{% endif %}
-					<center>
-						<p class="text-left"><strong>Contact Info: </strong><br>
-        				<a href="mailto:user.email">{{ user.email }}</a>
-						<br>
-						{% if user.is_student and student != None %}
-						Phone: {{ student.phone }}
-						{% elif user.is_teacher and teacher != None %}
-						Phone: {{ teacher.phone }}
-						<br>
-            			Office: {{ teacher.office }}
-						{% elif user.is_engineer and engineer != None %}
-						Phone: {{ engineer.phone }}
-						{% endif %}
-					</center>
+						<center>
+							<p class="text-left"><strong>Contact Info: </strong><br>
+							<a href="mailto:user.email">{{ user.email }}</a>
+							<br>
+							{% if user.is_student and student != None %}
+							Phone: {{ student.phone }}
+							{% elif user.is_teacher and teacher != None %}
+							Phone: {{ teacher.phone }}
+							<br>
+							Office: {{ teacher.office }}
+							{% elif user.is_engineer and engineer != None %}
+							Phone: {{ engineer.phone }}
+							{% endif %}
+						</center>
 					</center>
 					<hr>
-						<p class="text-left"><strong>About: </strong><br>
-						{{ teacher.about | safe }}
+					{% if user.is_student and student != None %}
+					<p class="text-left"><strong>About: </strong><br>
+					{{ student.about | safe }}
+					{% elif user.is_teacher and teacher != None %}
+					<p class="text-left"><strong>About: </strong><br>
+					{{ teacher.about | safe }}
+					{% elif user.is_engineer and engineer != None %}
+					<p class="text-left"><strong>About: </strong><br>
+					{{ engineer.about | safe }}
+					{% endif %}
 				</div>
 				<div class="modal-footer">
 					{% if current_user == user %}

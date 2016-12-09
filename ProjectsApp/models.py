@@ -7,8 +7,8 @@ from CompaniesApp.models import Company
 from AuthenticationApp.models import MyUser
 
 class Project(models.Model):
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=10000)
+    name = models.CharField(max_length=200) 
+    description = models.CharField(max_length=10000) 
     created_at = models.DateTimeField('date created')
     updated_at = models.DateTimeField('date updated')
     company = models.ForeignKey(Company, default=None)
@@ -39,6 +39,12 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+class Feature(models.Model):
+    weight = models.IntegerField(default=1)
+    name = models.CharField(max_length = 64, default=None)
+    description = models.CharField(max_length = 10000, default=None)
+    project = models.ForeignKey(Project, default=None, null=True)
 
 class Bookmark(models.Model):
     user = models.ForeignKey(MyUser, default=None)
