@@ -4,8 +4,9 @@
 .container li { list-style-type: none; border-left: 1px solid lightGray; margin: 0; padding-left: 1em; }
 </style>
 
-<div class="container" role="main" id="comments"></div>
+<h4 style='color:gray' id="response"></h4>
 <div id="data" data-comments="{{comments}}"></div>
+<div class="container" role="main" id="comments"></div>
 
 <script>
 function timeDifference(current, previous) {
@@ -61,7 +62,10 @@ function timeDifference(current, previous) {
 				id: parentId,
                 group_id: groupId,
 			}, data => {
-				location.reload()
+                if (data['response'] !== '')
+                    $("#response").text(data['response'])
+                else
+                    location.reload()
 			})
 		})
 		if (!$target.children().length)

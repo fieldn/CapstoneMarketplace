@@ -166,7 +166,7 @@ def getGroupForm(request):
         form = GroupForm()
         context = {
                 "form" : form,
-                "course_list" : all_courses
+                "course_list" : all_courses,
                 }
         return render(request, 'groupform.html', context)
     # render error page if user is not logged in
@@ -316,6 +316,11 @@ def getComments(request):
 def gAddComment(request):
     if request.method == 'POST':
         try:
+            # you can only comment if you are in the group
+            if not request.user.group_set.all().exists():
+                response_data = { 'response' : 'Error: You cannot comment because you are not a member of this group.' }
+                return HttpResponse(json.dumps(response_data), content_type='application/json')
+
             identifier = int(request.POST.get('id', default=-1))
             comment = request.POST['comment']
             comments_list = list(models.Comment.objects.all())
@@ -327,7 +332,7 @@ def gAddComment(request):
             if parent != None:
                 parent.subcomments += ',' + str(new_comment.id)
                 parent.save();
-            response_data = { 'error' : 'success' }
+            response_data = { 'response' : '' }
             return HttpResponse(json.dumps(response_data), content_type='application/json')
         except KeyError:
             pass
