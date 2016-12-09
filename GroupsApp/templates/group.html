@@ -3,6 +3,7 @@
 {% block content %}
 	<div class="container theme-showcase" role="main">
 		<div class="jumbotron" style="background-color:#DDE0F8">
+            <h3>{{ error }}</h3>
 			<h1>{{ group.name }}</h1>
 			{% if group.project != None %}
             <h2><a href="/project?name={{ group.project }}">{{ group.project }}</a></h2>

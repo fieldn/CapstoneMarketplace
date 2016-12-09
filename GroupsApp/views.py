@@ -248,12 +248,17 @@ def getGroupFormSuccess(request):
 
 def joinGroup(request):
     if request.user.is_authenticated():
-        print request.user.is_student
-        if not request.user.is_student:
-            return render(request, 'autherror.html')
-
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
+
+        if not request.user.is_student:
+            context = {
+                'group' : in_group,
+                'userIsMember' : False,
+                'error' : 'Error: You must be a student to join a group.',
+            }
+            return render(request, 'group.html', context)
+
         in_group.members.add(request.user)
         in_group.save();
         request.user.group_set.add(in_group)
@@ -261,6 +266,7 @@ def joinGroup(request):
         context = {
             'group' : in_group,
             'userIsMember': True,
+            'error' : ''
         }
         return render(request, 'group.html', context)
     return render(request, 'autherror.html')
