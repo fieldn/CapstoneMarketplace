@@ -138,7 +138,7 @@ def courseForm(request):
             }
         return render(request, 'courseform.html', context)
     # render error page if user is not logged in
-    return render(request, 'autherror.html')
+    return render(request, 'autherror.html') 
 
 def addCourse(request):
     if request.user.is_authenticated():
@@ -318,25 +318,24 @@ def updateCourse(request):
 
     form = forms.UpdateCourseForm(request.POST or None, instance=in_course)
 
-    if form.is_valid():
-        """
-        if not in_course.members.filter(email__exact=request.user.email):
-            print in_course.members.all()
-            print "not in course"
-            return render(request, 'updatecourseform.html', {'error' : 'You must be in the course to modify it!'})
-        """
-
-        if not request.user.is_teacher:
-            print "not a teacher"
-            return render(request, 'updatecourseform.html', {'error' : 'Only teachers can update classes!'})
-
-        form.save()
-        messages.success(request, 'Success: your information was saved.')
-
     context = {
         "form": form,
         "links" : ["logout"],
         }
+
+    if form.is_valid():
+        if not in_university.members.filter(email__exact=request.user.email):
+            print in_course.members.all()
+            context['error'] = 'You must be in the university to modify it!'
+            return render(request, 'updatecourseform.html', context)
+
+        if not request.user.is_teacher:
+            context['error'] = 'Only teachers can update classes!'
+            return render(request, 'updatecourseform.html', context)
+
+        form.save()
+        messages.success(request, 'Success: your information was saved.')
+
     return render(request, 'updatecourseform.html', context)
 
 
