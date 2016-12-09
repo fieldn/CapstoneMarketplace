@@ -9,6 +9,7 @@ from .forms import GroupForm
 import json
 from django.http import HttpResponse
 from AuthenticationApp.models import Student
+from .models import Comment, Group
 
 def getGroups(request):
     if request.user.is_authenticated():
@@ -90,7 +91,6 @@ def getGroupFormUpdate(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
         group_name = request.get('group_name', 'None')
-        print "this is getting here"
         all_courses = request.user.course_set.all()
         form = GroupForm()
         context = {
@@ -104,10 +104,8 @@ def getGroupFormUpdate(request):
 def updateGroupForm(request):
     if request.user.is_authenticated():
         if request.method == 'GET' :
-            print 'request name is get'
             form = forms.GroupForm()
             group_id = request.GET.get('id', 'None')
-            print group_id
             group = models.Group.objects.get(id__exact=group_id)
             group_name = group.name
             group_desc = group.description
@@ -277,9 +275,11 @@ def serialize(c):
     }
 
 def getComments(request):
-    comments_list = list(models.Comment.objects.filter(parent=True))
+    gr = Group.objects.get(name=request.GET.get('name' or None))
+    group_comments = gr.comment_set.all().filter(parent=True)
+    comments_list = list(group_comments)
     j = json.dumps({'list' : map(serialize, comments_list)})
-    context = {'comments' : j} #'group_id' : models.Group.objects.get(id=)}
+    context = {'comments' : j, 'group_id' : gr.id}
     return render(request, 'gComments.html', context)
 
 def gAddComment(request):
@@ -289,7 +289,9 @@ def gAddComment(request):
             comment = request.POST['comment']
             comments_list = list(models.Comment.objects.all())
             parent = next((c for c in comments_list if c.id == identifier), None)
-            new_comment = models.Comment(user=request.user, comment=comment, parent=parent==None)
+            group_id = request.POST['group_id']
+
+            new_comment = models.Comment(user=request.user, comment=comment, parent=parent==None, group_id=group_id)
             new_comment.save()
             if parent != None:
 				parent.subcomments += ',' + str(new_comment.id)
