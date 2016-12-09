@@ -368,6 +368,7 @@ def serialize(c):
         'comment' : c.comment,
         'subcomments' : [serialize(getCommentByID(s)) for s in c.subcomments.split(',') if isInt(s)],
         'user' : c.user,
+        'user_type' : c.user_type,
         'deleted' : c.deleted,
     }
 
@@ -384,8 +385,6 @@ def getComments(request):
         'group_id' : gr.id,
         'user' : user,
         'university' : university,
-        'is_teacher' : True,
-        'is_engineer' : False,
     }
     return render(request, 'group.html', context)
 
@@ -422,8 +421,9 @@ def gAddComment(request):
             comment = request.POST['comment']
             comments_list = list(models.Comment.objects.all())
             parent = next((c for c in comments_list if c.id == identifier), None)
+            user_type = 'Admin' if request.user.is_admin else 'Engineer' if request.user.is_engineer else 'Teacher' if request.user.is_teacher else 'Student' if request.user.is_student else 'Visitor'
 
-            new_comment = Comment(user=request.user.get_full_name(), comment=comment, parent=parent==None, group_id=group_id, deleted=False)
+            new_comment = Comment(user=request.user.get_full_name(), user_type=user_type, comment=comment, parent=parent==None, group_id=group_id, deleted=False)
             new_comment.save()
             if parent != None:
                 parent.subcomments += ',' + str(new_comment.id)
