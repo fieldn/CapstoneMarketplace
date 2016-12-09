@@ -24,6 +24,7 @@ class Comment(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, default=None)
     time = models.DateTimeField(auto_now=True)
     user = models.CharField(max_length=100, default="")
+    user_type = models.CharField(max_length=100, default="Visitor")
     comment = models.CharField(max_length=500, default="")
     subcomments = models.TextField(default='')
     parent = models.BooleanField(default=True)

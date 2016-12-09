@@ -38,8 +38,7 @@ function timeDifference(current, previous) {
                 return ''
             }
 			const sub = e.subcomments.length ? g(html, e.subcomments) : '' 
-            const jobStr = e.is_teacher === 'True' ? '<Teacher>' : e.is_engineer === 'True' ? '<Engineer>' : '<Student>'
-			const timeStr = timeDifference(Date.now(), new Date(e.time)) + ' by ' + e.user + ' ' + jobStr
+			const timeStr = timeDifference(Date.now(), new Date(e.time)) + ' by ' + e.user_type + ' ' + e.user
 			return `<li><p style="color: gray">${timeStr}</p><p data-id=${e.id} data-op='${e.user}'>${e.comment}<p>${sub} </li>`
 		}).join('') + '</ul>'
 	}('', $("#data").data('comments').list) + '<p data-id=-1>Click to add a comment</p>')
