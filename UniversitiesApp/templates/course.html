@@ -35,7 +35,26 @@
 			</div>
 		</div>
 	</div>
-
+	{% if user.is_student and userInCourse %}
+    <div class="container" role="main">
+		<div class="table-responsive">
+			<table class="table table-striped sortable">
+				<thead>
+					<tr>
+						<th>Compatible Teammates</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in teammates %}
+					<tr>
+                        <td><a href="/user?user={{item.email}}">{{ item.get_full_name }}</a></td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+    {% endif %}
     <div class="container" role="main">
 		<div class="table-responsive">
 			<table class="table table-striped sortable">

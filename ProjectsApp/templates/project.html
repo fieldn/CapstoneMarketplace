@@ -5,7 +5,7 @@
             <h1>{{ project.name }}</h1>
 			<p>{{ project.description }}</p>
             <br>
-			<p>Posted by {{ project.company }}</p>
+            <p>Posted by <a href="/company?name={{ project.company }}">{{ project.company }}</a></p>
             <p>Requires knowledge of:
 				<ul id=list></ul>
             </p>

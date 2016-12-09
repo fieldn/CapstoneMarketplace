@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from . import models
 from . import forms
+from AuthenticationApp.models import Student
 
 def getUniversities(request):
     if request.user.is_authenticated():
@@ -121,13 +122,34 @@ def getCourse(request):
         in_course_tag = request.GET.get('course', 'None')
         in_course = in_university.course_set.get(tag__exact=in_course_tag)
         is_member = in_course.members.filter(email__exact=request.user.email)
+        teammates = []
+        if is_member:
+            # find compatible teammates
+            for s in in_course.members.all():
+                if request.user != s and compatible(Student.objects.get(user=request.user), Student.objects.get(user=s)):
+                    teammates.append(s)
+
+        print teammates
         context = {
             'university' : in_university,
             'course' : in_course,
             'userInCourse' : is_member,
+            'teammates' : teammates,
             }
         return render(request, 'course.html', context)
     return render(request, 'autherror.html')
+
+def compatible(u1, u2):
+    if (((u1.c_lang and u2.c_lang) or
+        (u1.java_lang and u2.java_lang) or
+        (u1.python_lang and u2.python_lang)) and
+        ((u1.front_end_spec and u2.front_end_spec) or
+        (u1.back_end_spec and u2.back_end_spec) or
+        (u1.full_stack_spec and u2.full_stack_spec) or
+        (u1.mobile_spec and u2.mobile_spec))):
+        return True
+    else:
+        return False
 
 def courseForm(request):
     if request.user.is_authenticated():
