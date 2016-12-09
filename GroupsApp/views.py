@@ -169,7 +169,7 @@ def updateGroupForm(request):
                 for item in form.cleaned_data['members'].split('\n'):
                     try:
                         person = models.MyUser.objects.filter(email__exact=item).get()
-                        if person in new_group.members.all():
+                        if person in group.members.all():
                             pass
                         else:
                             group.members.add(person)
