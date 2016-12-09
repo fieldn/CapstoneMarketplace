@@ -369,6 +369,8 @@ def getComments(request):
         'group_id' : gr.id,
         'user' : user,
         'university' : university,
+        'is_teacher' : True,
+        'is_engineer' : False,
     }
     return render(request, 'gComments.html', context)
 
