@@ -8,7 +8,8 @@ from . import forms
 from .forms import GroupForm
 import json
 from django.http import HttpResponse
-from AuthenticationApp.models import Student
+from AuthenticationApp.models import Student, Teacher, Engineer
+from UniversitiesApp.models import University, Course
 from .models import Comment, Group
 
 def getGroups(request):
@@ -25,6 +26,8 @@ def getGroup(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
+        in_course = in_group.course
+        in_university = in_course.university
         is_member = in_group.members.filter(email__exact=request.user.email)
 
         features = None
@@ -41,7 +44,7 @@ def getGroup(request):
             yrs_of_exp = 0
 
             # remove any qualification that a group member doesn't have
-            for member in in_group.members.all():
+            for member in in_group.members.all().filter(is_student=True):
                 student = Student.objects.get(user=member)
                 c_lang = c_lang and student.c_lang
                 java_lang = java_lang and student.java_lang
@@ -103,6 +106,7 @@ def getGroup(request):
             'completedWeight' : completedWeight,
             'completedPercent' : 100 * completedWeight / float(totalWeight),
             'user' : request.user.get_full_name(),
+            'university' : in_university,
         }
         return render(request, 'group.html', context)
     # render error page if user is not logged in
@@ -358,19 +362,42 @@ def getComments(request):
     comments_list = list(group_comments)
     j = json.dumps({'list' : map(serialize, comments_list)})
     user = request.GET.get('user' or None)
+    university = request.GET.get('uni' or None)
 
     context = {
         'comments' : j,
         'group_id' : gr.id,
-        'user' : user
+        'user' : user,
+        'university' : university,
     }
     return render(request, 'gComments.html', context)
 
 def gAddComment(request):
     if request.method == 'POST':
         try:
-            # you can only comment if you are in the group
-            if not request.user.group_set.all().exists():
+            teacher_in_univ = False
+            if request.user.is_teacher:
+                teacher = Teacher.objects.get(user_id=request.user.id)
+                university = University.objects.get(name=request.POST['university'])
+                teacher_in_univ = university.members.all().filter(email=request.user.email).exists()
+
+            group_id = request.POST['group_id']
+
+            group = Group.objects.get(id=group_id)
+            project = group.project
+
+            engineer_in_company = False
+            if request.user.is_engineer and project is not None:
+                company = project.company
+                if company is not None:
+                    engineer = Engineer.objects.get(user_id=request.user.id)
+                    engineer_in_company = company.members.all().filter(email=request.user.email).exists()
+
+            # you can only comment if:
+			#	- you are in the group or
+			#	- you are a teacher for the class associated to this group or
+            #	- you are an engineer for the company on whose project this group is working
+            if not engineer_in_company and not teacher_in_univ and not request.user.group_set.all().filter(id=group_id).exists():
                 response_data = { 'response' : 'Error: You cannot comment because you are not a member of this group.' }
                 return HttpResponse(json.dumps(response_data), content_type='application/json')
 
@@ -378,7 +405,6 @@ def gAddComment(request):
             comment = request.POST['comment']
             comments_list = list(models.Comment.objects.all())
             parent = next((c for c in comments_list if c.id == identifier), None)
-            group_id = request.POST['group_id']
 
             new_comment = Comment(user=request.user.get_full_name(), comment=comment, parent=parent==None, group_id=group_id, deleted=False)
             new_comment.save()
