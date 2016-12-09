@@ -97,12 +97,12 @@ def getGroup(request):
             'group' : in_group,
             'userIsMember': is_member,
             'projects' : matchedProjects,
-            'user' : request.user,
             'features' : features,
             'completeFeatures' : completed_features,
             'totalWeight' : totalWeight,
             'completedWeight' : completedWeight,
             'completedPercent' : 100 * completedWeight / float(totalWeight),
+            'user' : request.user.get_full_name(),
         }
         return render(request, 'group.html', context)
     # render error page if user is not logged in
@@ -340,15 +340,21 @@ def serialize(c):
         'comment' : c.comment,
         'subcomments' : [serialize(getCommentByID(s)) for s in c.subcomments.split(',') if isInt(s)],
         'user' : c.user,
+        'deleted' : c.deleted,
     }
 
 def getComments(request):
     gr = Group.objects.get(name=request.GET.get('name' or None))
-    group_comments = gr.comment_set.all().filter(parent=True)
+    group_comments = gr.comment_set.all().filter(parent=True, deleted=False)
     comments_list = list(group_comments)
-    user = request.GET.get('user' or None)
     j = json.dumps({'list' : map(serialize, comments_list)})
-    context = {'comments' : j, 'group_id' : gr.id}
+    user = request.GET.get('user' or None)
+
+    context = {
+        'comments' : j,
+        'group_id' : gr.id,
+        'user' : user
+    }
     return render(request, 'gComments.html', context)
 
 def gAddComment(request):
@@ -365,7 +371,7 @@ def gAddComment(request):
             parent = next((c for c in comments_list if c.id == identifier), None)
             group_id = request.POST['group_id']
 
-            new_comment = models.Comment(user=request.user.get_full_name(), comment=comment, parent=parent==None, group_id=group_id)
+            new_comment = Comment(user=request.user.get_full_name(), comment=comment, parent=parent==None, group_id=group_id, deleted=False)
             new_comment.save()
             if parent != None:
                 parent.subcomments += ',' + str(new_comment.id)
@@ -374,3 +380,16 @@ def gAddComment(request):
             return HttpResponse(json.dumps(response_data), content_type='application/json')
         except KeyError:
             pass
+
+def gDeleteComment(request):
+    if request.method == 'POST':
+        comment_id = request.POST['comment_id']
+        comment = Comment.objects.get(id=comment_id)
+        comment.deleted = True
+        comment.save()
+
+        response_data = { 'response' : '' }
+        return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+    response_data = { 'response' : 'Error: Could not delete comment.' }
+    return HttpResponse(json.dumps(response_data), content_type='application/json')

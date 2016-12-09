@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^group$', views.getGroup, name='getGroup'),
     url(r'^group/getComments$', views.getComments, name='getComments'),
     url(r'^group/gAddComment$', views.gAddComment, name='gAddComment'),
+    url(r'^group/gDeleteComment$', views.gDeleteComment, name='gDeleteComment'),
     url(r'^group/accept$', views.acceptProject, name='AcceptProject'),
     url(r'^group/remove$', views.removeGroup, name='RemoveGroup'),
     url(r'^group/feature/done$', views.featureDone, name='FeatureDone'),
