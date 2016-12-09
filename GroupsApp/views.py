@@ -237,6 +237,10 @@ def getGroupFormSuccess(request):
 
 def joinGroup(request):
     if request.user.is_authenticated():
+        print request.user.is_student
+        if not request.user.is_student:
+            return render(request, 'autherror.html')
+
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
         in_group.members.add(request.user)
