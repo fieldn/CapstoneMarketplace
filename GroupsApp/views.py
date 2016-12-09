@@ -27,6 +27,7 @@ def getGroup(request):
         in_group = models.Group.objects.get(name__exact=in_name)
         is_member = in_group.members.filter(email__exact=request.user.email)
 
+        features = None
         matchedProjects = []
         if in_group.project == None:
 
@@ -77,12 +78,31 @@ def getGroup(request):
                 if project.yrs_of_exp > yrs_of_exp:
                     continue
                 matchedProjects.append(project)
+        else:
+            required_features = in_group.project.feature_set.all()
+            totalWeight = 0
+            for f in required_features:
+                totalWeight += f.weight
+
+            completed_features = in_group.features.all()
+            completedWeight = 0
+            for f in completed_features:
+                completedWeight += f.weight
+
+            features = set(required_features) - set(completed_features)
+            print totalWeight
+            print completedWeight / totalWeight
 
         context = {
             'group' : in_group,
             'userIsMember': is_member,
             'projects' : matchedProjects,
             'user' : request.user,
+            'features' : features,
+            'completeFeatures' : completed_features,
+            'totalWeight' : totalWeight,
+            'completedWeight' : completedWeight,
+            'completedPercent' : 100 * completedWeight / float(totalWeight),
         }
         return render(request, 'group.html', context)
     # render error page if user is not logged in
@@ -278,6 +298,21 @@ def acceptProject(request):
         in_group = models.Group.objects.get(name__exact=in_group_name)
         setattr(in_group, 'project', in_project)
         in_group.save()
+
+        context = {
+            'group' : in_group,
+            'userIsMember': True,
+        }
+        return render(request, 'group.html', context)
+    return render(request, 'autherror.html')
+
+def featureDone(request):
+    if request.user.is_authenticated():
+        in_group_name = request.GET.get('group', 'None')
+        in_group = models.Group.objects.get(name__exact=in_group_name)
+        in_feat_id = request.GET.get('feat_id', 'None')
+        in_feat = models.Feature.objects.get(pk=in_feat_id)
+        in_group.features.add(in_feat)
 
         context = {
             'group' : in_group,

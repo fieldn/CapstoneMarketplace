@@ -5,9 +5,16 @@
 		<div class="jumbotron" style="background-color:#DDE0F8">
 			<h1>{{ group.name }}</h1>
 			{% if group.project != None %}
-            <h2><a href="/project?name={{ group.project }}">{{ group.project }}</h2>
+            <h2><a href="/project?name={{ group.project }}">{{ group.project }}</a></h2>
 			{% endif %}
 			<p>{{ group.description }}</p>
+	        {% if group.project != None %}
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{ completedWeight }}"
+                    aria-valuemin="0" aria-valuemax="{{ totalWeight }}" style="width:{{ completedPercent }}%">
+                </div>
+            </div>
+            {% endif %}
 			{% if userIsMember %}
 			<a href="/group/unjoin?name={{ group.name }}" class="btn btn-default">Unjoin this Group</a>
 			<a href="/group/update?id={{ group.id }}" class="btn btn-default">Update Group</a>
@@ -60,6 +67,34 @@
 			</table>
 		</div>
 	</div>
+	{% else %}
+    <div class="container" role="main">
+        <div class="table-responsive">
+            <table class="table table-striped sortable">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in features %}
+                    <tr>
+                        <td>{{item.name}}</td>
+                        <td>{{item.description}}</td>
+                        <td><a href="/group/feature/done?group={{ group.name}}&feat_id={{ item.id }}" class="btn btn-default">Done!</a></td>
+                    </tr>
+                    {% endfor %}
+                    {% for item in completeFeatures %}
+                    <tr>
+                        <td><s>{{item.name}}</s></td>
+                        <td><s>{{item.description}}</s></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 	{% endif %}
 
 {% endblock %}
