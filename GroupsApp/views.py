@@ -248,11 +248,22 @@ def joinGroup(request):
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
 
+        in_course = in_group.course
+        gr = Group.objects.get(name=request.GET.get('name' or None))
+        group_comments = gr.comment_set.all().filter(parent=True, deleted=False)
+        in_university = in_course.university
+        comments_list = list(group_comments)
+        j = json.dumps({'list' : map(serialize, comments_list)})
+
         if not request.user.is_student:
             context = {
                 'group' : in_group,
                 'userIsMember' : False,
                 'error' : 'Error: You must be a student to join a group.',
+	            'user' : request.user.get_full_name(),
+                'university' : in_university,
+                'comments' : j,
+                'group_id' : gr.id,
             }
             return render(request, 'group.html', context)
 
@@ -263,7 +274,11 @@ def joinGroup(request):
         context = {
             'group' : in_group,
             'userIsMember': True,
-            'error' : ''
+            'error' : '',
+	        'user' : request.user.get_full_name(),
+            'university' : in_university,
+            'comments' : j,
+            'group_id' : gr.id,
         }
         return render(request, 'group.html', context)
     return render(request, 'autherror.html')
@@ -276,9 +291,22 @@ def unjoinGroup(request):
         in_group.save();
         request.user.group_set.remove(in_group)
         request.user.save()
+
+        in_course = in_group.course
+        gr = Group.objects.get(name=request.GET.get('name' or None))
+        group_comments = gr.comment_set.all().filter(parent=True, deleted=False)
+        in_university = in_course.university
+        comments_list = list(group_comments)
+        j = json.dumps({'list' : map(serialize, comments_list)})
+
         context = {
             'group' : in_group,
             'userIsMember': False,
+            'error' : 'You have left the group.',
+	        'user' : request.user.get_full_name(),
+            'university' : in_university,
+            'comments' : j,
+            'group_id' : gr.id,
         }
         return render(request, 'group.html', context)
     return render(request, 'autherror.html')
@@ -288,23 +316,45 @@ def removeGroup(request):
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
 
+        in_course = in_group.course
+        gr = Group.objects.get(name=request.GET.get('name' or None))
+        group_comments = gr.comment_set.all().filter(parent=True, deleted=False)
+        in_university = in_course.university
+        comments_list = list(group_comments)
+        j = json.dumps({'list' : map(serialize, comments_list)})
+
         if not request.user.is_student:
             return render(request, 'group.html', context = {
                 'group' : in_group,
                 'userIsMember': False,
-                })
+                'error' : 'You must be a student to delete the group.',
+	            'user' : request.user.get_full_name(),
+                'university' : in_university,
+                'comments' : j,
+                'group_id' : gr.id,
+            })
 
         if not request.user in in_group.members.all():
             return render(request, 'group.html', context = {
                 'group' : in_group,
                 'userIsMember': False,
-                })
+                'error' : 'You must be in the group to delete the group.',
+	            'user' : request.user.get_full_name(),
+                'university' : in_university,
+                'comments' : j,
+                'group_id' : gr.id,
+            })
 
         if len(in_group.members.all()) > 1:
             return render(request, 'group.html', context = {
                 'group' : in_group,
                 'userIsMember': True,
-                })
+                'error' : 'You must be the only member of a group to delete the group.',
+	            'user' : request.user.get_full_name(),
+                'university' : in_university,
+                'comments' : j,
+                'group_id' : gr.id,
+            })
 
         in_group.delete()
 
