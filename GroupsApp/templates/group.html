@@ -22,7 +22,6 @@
 			{% else %}
 			<a href="/group/join?name={{ group.name }}" class="btn btn-default">Join this Group</a>
 			{% endif %}
-			<a href="/group/getComments?name={{ group.name }}&user={{ user }}&uni={{ university }}" class="btn btn-default">Discuss this Group</a>
 		</div>
 	</div>
 	
@@ -31,7 +30,7 @@
 			<table class="table table-striped sortable">
 				<thead>
 					<tr>
-						<th>Users</th>
+						<th><h4>Group Members</h4></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -51,7 +50,7 @@
 			<table class="table table-striped sortable">
 				<thead>
 					<tr>
-						<th>Suggested Projects</th>
+						<th><h4>Suggested Projects</h4></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -108,5 +107,101 @@
         </div>
     </div>
 	{% endif %}
+    <div class="container">
+
+<style>
+li#list { list-style-type: none; border-left: 1px solid lightGray; margin: 0; padding-left: 1em; }
+</style>
+
+<h4 style='color:gray' id="response">Comments</h4>
+<div id="data" data-comments="{{comments}}"></div>
+<div class="container" role="main" id="comments"></div>
+
+<script>
+function timeDifference(current, previous) {
+    var msPerMinute = 60 * 1000
+    var msPerHour = msPerMinute * 60
+    var msPerDay = msPerHour * 24
+    var msPerMonth = msPerDay * 30
+    var msPerYear = msPerDay * 365
+
+    var elapsed = current - previous
+
+    if (elapsed < msPerMinute)
+         return Math.round(elapsed/1000) + ' seconds ago'
+    else if (elapsed < msPerHour)
+         return Math.round(elapsed/msPerMinute) + ' minutes ago'
+    else if (elapsed < msPerDay )
+         return Math.round(elapsed/msPerHour ) + ' hours ago'
+    else if (elapsed < msPerMonth)
+        return 'approximately ' + Math.round(elapsed/msPerDay) + ' days ago'
+    else if (elapsed < msPerYear)
+        return 'approximately ' + Math.round(elapsed/msPerMonth) + ' months ago'
+    else
+        return 'approximately ' + Math.round(elapsed/msPerYear ) + ' years ago'   
+}
+
+	$("#comments").html(function g (html, commentsList) {
+		return html + '<ul>' + commentsList.map(e => {
+            if (e.deleted) {
+                return ''
+            }
+			const sub = e.subcomments.length ? g(html, e.subcomments) : '' 
+            const jobStr = e.is_teacher === 'True' ? '<Teacher>' : e.is_engineer === 'True' ? '<Engineer>' : '<Student>'
+			const timeStr = timeDifference(Date.now(), new Date(e.time)) + ' by ' + e.user + ' ' + jobStr
+			return `<li id="list"><p style="color: gray">${timeStr}</p><p data-id=${e.id} data-op='${e.user}'>${e.comment}<p>${sub} </li>`
+		}).join('') + '</ul>'
+	}('', $("#data").data('comments').list) + '<p data-id=-1>Click to add a comment</p>')
+
+	let li = null;
+
+	$("#comments").click(e => {
+		const $target = $(e.target)
+		const parentId = e.target.dataset.id
+		const opId = e.target.dataset.op
+        const groupId = {{group_id}}
+
+		if (!parentId) return
+
+		if (li)
+			li.remove()
+		li = $('<li id="list">')
+		let button = $('<input type=button value=Submit>')
+		let inputBox = $('<input>')
+		li.append(inputBox)
+		li.append(button) 
+
+        let del_button = $('<br><input style="color:red" type=button value="Delete Comment">')
+        if (opId === '{{user}}')
+            li.append(del_button)
+
+        del_button.click(e => {
+			$.post('/group/gDeleteComment', {
+				comment_id: parentId,
+			}, data => {
+				location.reload()
+			})
+		})
+
+		button.click(e => {
+			$.post('/group/gAddComment', {
+				comment: inputBox.val(),
+				id: parentId,
+                group_id: groupId,
+                university: '{{university}}',
+			}, data => {
+                if (data['response'] !== '')
+                    $("#response").text(data['response'])
+                else
+                    location.reload()
+			})
+		})
+		if (!$target.children().length)
+			$target.append(li)
+		else
+			$target.children().first().prepend(li)
+	});
+</script>
+	</div>
 
 {% endblock %}

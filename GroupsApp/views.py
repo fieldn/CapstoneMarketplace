@@ -100,6 +100,11 @@ def getGroup(request):
 
             features = set(required_features) - set(completed_features)
 
+        gr = Group.objects.get(name=request.GET.get('name' or None))
+        group_comments = gr.comment_set.all().filter(parent=True, deleted=False)
+        comments_list = list(group_comments)
+        j = json.dumps({'list' : map(serialize, comments_list)})
+        user = request.GET.get('user' or None)
         context = {
             'group' : in_group,
             'userIsMember': is_member,
@@ -111,7 +116,13 @@ def getGroup(request):
             'completedPercent' : percentComplete,
             'user' : request.user.get_full_name(),
             'university' : in_university,
+            'comments' : j,
+            'group_id' : gr.id,
+            'user' : user,
+            'is_teacher' : True,
+            'is_engineer' : False,
         }
+
         return render(request, 'group.html', context)
     # render error page if user is not logged in
     return render(request, 'autherror.html')
@@ -376,7 +387,7 @@ def getComments(request):
         'is_teacher' : True,
         'is_engineer' : False,
     }
-    return render(request, 'gComments.html', context)
+    return render(request, 'group.html', context)
 
 def gAddComment(request):
     if request.method == 'POST':
