@@ -35,6 +35,7 @@ def getGroup(request):
         totalWeight = 0
         completedWeight = 0
         percentComplete = 0
+        completed_features = None
         if in_group.project == None:
 
             c_lang = True
@@ -93,7 +94,9 @@ def getGroup(request):
             for f in completed_features:
                 completedWeight += f.weight
 
-            percentComplete = 100 * completedWeight / float(totalWeight)
+            percentComplete = 0
+            if totalWeight != 0:
+                percentComplete = 100 * completedWeight / float(totalWeight)
 
             features = set(required_features) - set(completed_features)
 
