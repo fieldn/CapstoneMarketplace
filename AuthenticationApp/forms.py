@@ -12,15 +12,16 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
 class RegisterStudentForm(forms.Form):
+    email = forms.CharField(label='Email', widget=forms.EmailInput, required=True)
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
 
-    email = forms.CharField(label='Email', widget=forms.EmailInput, required=True)
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
 
     studentPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
-    studentAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)               
+    studentAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows': 5}), required=False)               
+
     # which languages you need to know
     c_lang = forms.BooleanField(label='C', widget=forms.CheckboxInput, required=False)
     java_lang = forms.BooleanField(label='Java', widget=forms.CheckboxInput, required=False)
@@ -56,10 +57,10 @@ class RegisterStudentForm(forms.Form):
             raise forms.ValidationError("There was an error, please contact us later")
     
 class RegisterTeacherForm(forms.Form):
+    email = forms.CharField(label='Email', widget=forms.EmailInput, required=True)
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
 
-    email = forms.CharField(label='Email', widget=forms.EmailInput, required=True)
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
 
@@ -88,10 +89,10 @@ class RegisterTeacherForm(forms.Form):
             raise forms.ValidationError("There was an error, please contact us later")
 
 class RegisterEngineerForm(forms.Form):
+    email = forms.CharField(label='Email', widget=forms.EmailInput, required=True)
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
 
-    email = forms.CharField(label='Email', widget=forms.EmailInput, required=True)
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
 
@@ -129,7 +130,7 @@ class UpdateForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'password', 'first_name', 'last_name')
+        fields = ('email', 'first_name', 'last_name', 'password')
 
     def clean_password(self):            
         return self.initial["password"]        
