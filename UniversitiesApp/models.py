@@ -21,6 +21,7 @@ class University(models.Model):
 class Course(models.Model):
 	tag = models.CharField(max_length=10)
 	name = models.CharField(max_length=50)
+        photo = models.ImageField(upload_to="static/courseimages", default=0)
 	description = models.CharField(max_length=300)
 	university = models.ForeignKey(University, on_delete=models.CASCADE)
 	members = models.ManyToManyField(MyUser)

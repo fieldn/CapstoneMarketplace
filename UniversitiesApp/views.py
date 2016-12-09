@@ -160,6 +160,7 @@ def addCourse(request):
                     return render(request, 'courseform.html', {'error' : 'Error: That course tag already exists at this university!'})
                 new_course = models.Course(tag=form.cleaned_data['tag'],
                     name=form.cleaned_data['name'],
+                    photo=request.FILES['photo'],  
                     description=form.cleaned_data['description'],
                     university=in_university)
                 new_course.save()
