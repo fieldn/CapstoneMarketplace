@@ -26,3 +26,4 @@ class Comment(models.Model):
     comment = models.CharField(max_length=500, default="")
     subcomments = models.TextField(default='')
     parent = models.BooleanField(default=True)
+    deleted = models.BooleanField(default=False)
