@@ -14,12 +14,24 @@ def getIndex(request):
     projects = None
     if request.user != None:
         if request.user.is_student:
-            courses = request.user.course_set.all()
-            groups = request.user.group_set.all()
+            try:
+                courses = request.user.course_set.all()
+            except:
+                pass
+            try:
+                groups = request.user.group_set.all()
+            except:
+                pass
         if request.user.is_teacher:
-            courses = request.user.university_set.all().first().course_set.all()
+            try:
+                courses = request.user.university_set.all().first().course_set.all()
+            except:
+                pass
         if request.user.is_engineer:
-            projects = request.user.company_set.all().first().project_set.all()
+            try:
+                projects = request.user.company_set.all().first().project_set.all()
+            except:
+                pass
 
     return render(request, 'index.html', {
         'userObj' : request.user,
