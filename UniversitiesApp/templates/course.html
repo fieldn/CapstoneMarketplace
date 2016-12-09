@@ -4,16 +4,23 @@
 <!-- Content -->
 	<div class="container theme-showcase" role="main">
 		<div class="jumbotron" style="background-color:#D9F9E7">
-			<h1 class="col-lg-offset-3"> {{ course.name }}</h1>
+			<h1 class="col-lg-offset-3"> {{ course.name }}<small> {{ course.tag }} </small></h1>
 
 			<div class="row">
 				<div class="col-md-3">
-					<img src="/{{ university.photo }}" alt="University Image" width="150" class="img-responsive"/>
+					<img src="/{{ course.photo }}" alt="Course Image" width="150" class="img-responsive"/>
 				</div>
 
 				<div class="col-md-9">
-					<h2>({{ course.tag }})</h2>
 					<p>{{ course.description }}</p>
+					<p><strong>Instructors</strong> |
+					{% for item in course.members.all %}
+					{% if item.is_teacher %}
+					<a href="/user?user={{item.email}}">{{ item.get_full_name }}</a> |
+					{% endif %}
+					{% endfor %}
+					<br>
+					<br>
 					{% if user.is_student and userInCourse %}
 					<a href="/university/course/unjoin?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Leave this Course</a>
 					{% elif user.is_student %}
@@ -23,13 +30,6 @@
 					<a href="/university/course/remove?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Delete this Course</a>
 					<a href="/university/course/manage?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Manage this Course</a>
 					<a href="/university/course/update?name={{ university.name }}&course={{ course.tag }}" class="btn btn-default">Update this Course</a>
-					{% endif %}
-					<p>{{ university.description }}</p>
-					<h5><a href="{{ university.website }}">Website</a></h5>
-					{% if userIsMember %}
-					<a href="/university/unjoin?name={{ university.name }}" class="btn btn-default">Leave this University</a>
-					{% else %}
-					<a href="/university/join?name={{ university.name }}" class="btn btn-default">Join this University</a>
 					{% endif %}
 				</div>
 			</div>
