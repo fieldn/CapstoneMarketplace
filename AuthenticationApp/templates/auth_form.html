@@ -13,7 +13,7 @@
 	<div class="panel panel-default">
 		<div class="jumbotron" style="margin-bottom:0px">
 			<h1>{{ page_name }}</h1>
-			<form method="POST" class="panel-body" novalidate> {% csrf_token %}
+			<form method="POST" enctype="multipart/form-data" class="panel-body" novalidate> {% csrf_token %}
 				{{ form.as_p }}
 				{{ form2.as_p }}
 				<input type="submit" class='btn btn-primary' value="{{ button_value }}">

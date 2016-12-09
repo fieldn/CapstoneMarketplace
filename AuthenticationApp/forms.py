@@ -20,6 +20,7 @@ class RegisterStudentForm(forms.Form):
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
 
     studentPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
+    studentPhoto = forms.ImageField(label='Photo', required=False)
     studentAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows': 5}), required=False)               
 
     # which languages you need to know
@@ -67,6 +68,7 @@ class RegisterTeacherForm(forms.Form):
     teacherTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
     teacherPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
     teacherOffice = forms.CharField(label="Office", widget=forms.TextInput, required=False)
+    teacherPhoto = forms.ImageField(label='Photo', required=False)
     teacherAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)               
 
     def clean_password2(self):
@@ -99,7 +101,8 @@ class RegisterEngineerForm(forms.Form):
     engineerTitle = forms.CharField(label="Title", widget=forms.TextInput, required=False)               
     engineerAlmaMater = forms.CharField(label="Alma Mater", widget=forms.TextInput, required=False)               
     engineerPhone =  forms.CharField(label="Phone", widget=forms.TextInput, required=False)
-    engineerAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)               
+    engineerPhoto = forms.ImageField(label='Photo', required=False)
+    engineerAbout = forms.CharField(label="About", widget=TinyMCE(attrs={'cols': 20, 'rows':5}), required=False)
 
     def clean_password2(self):
         # Check that the two password entries match

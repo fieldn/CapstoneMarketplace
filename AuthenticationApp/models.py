@@ -39,23 +39,9 @@ class MyUserManager(BaseUserManager):
         return user
 
 class MyUser(AbstractBaseUser):
-    email = models.EmailField(
-        verbose_name='email address',
-        max_length=255,
-        unique=True,
-        )
-
-    first_name = models.CharField(
-        max_length=120,
-        null=True,
-        blank=True,
-        )    
-
-    last_name = models.CharField(
-        max_length=120,
-        null=True,
-        blank=True,
-        )
+    email = models.EmailField( verbose_name='email address', max_length=255, unique=True,) 
+    first_name = models.CharField( max_length=120, null=True, blank=True,)    
+    last_name = models.CharField( max_length=120, null=True, blank=True,)
 
     is_active = models.BooleanField(default=True,)
     is_admin = models.BooleanField(default=False,)
@@ -109,18 +95,9 @@ class MyUser(AbstractBaseUser):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(
-        MyUser,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="student_info")
-
-    phone = models.CharField(
-        max_length=11,
-        null=True,
-        blank=True,
-        )
-
+    user = models.OneToOneField( MyUser, on_delete=models.CASCADE, primary_key=True, related_name="student_info") 
+    phone = models.CharField( max_length=11, null=True, blank=True,) 
+    photo = models.ImageField(upload_to="static/userimages", default=0)
     about = HTMLField()
     
     # which languages you need to know
@@ -161,36 +138,14 @@ class Student(models.Model):
         return False
 
 class Teacher(models.Model):
-    user = models.OneToOneField(
-        MyUser,
-        on_delete=models.CASCADE,
-        primary_key=True)
-
-    phone = models.CharField(
-        max_length=11,
-        null=True,
-        blank=True,
-        )
-
+    user = models.OneToOneField( MyUser, on_delete=models.CASCADE, primary_key=True) 
+    phone = models.CharField( max_length=11, null=True, blank=True,) 
+    photo = models.ImageField(upload_to="static/userimages", default=0, blank=True)
     about = HTMLField()
 
-    title = models.CharField(
-        max_length=32,
-        null=True,
-        blank=True,
-        )
-
-    email = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        )
-    
-    office = models.CharField(
-        max_length=32,
-        null=True,
-        blank=True,
-        ) 
+    title = models.CharField( max_length=32, null=True, blank=True,) 
+    email = models.CharField( max_length=255, null=True, blank=True,) 
+    office = models.CharField( max_length=32, null=True, blank=True,) 
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
@@ -216,36 +171,14 @@ class Teacher(models.Model):
         return False
 
 class Engineer(models.Model):
-    user = models.OneToOneField(
-        MyUser,
-        on_delete=models.CASCADE,
-        primary_key=True)
-
-    phone = models.CharField(
-        max_length=11,
-        null=True,
-        blank=True,
-        )
-
+    user = models.OneToOneField( MyUser, on_delete=models.CASCADE, primary_key=True) 
+    phone = models.CharField( max_length=11, null=True, blank=True,) 
+    photo = models.ImageField(upload_to="static/userimages", default=0)
     about = HTMLField()
 
-    title = models.CharField(
-        max_length=32,
-        null=True,
-        blank=True,
-        )
-
-    email = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        )
-    
-    almaMater = models.CharField(
-        max_length=32,
-        null=True,
-        blank=True,
-        )
+    title = models.CharField( max_length=32, null=True, blank=True,) 
+    email = models.CharField( max_length=255, null=True, blank=True,) 
+    almaMater = models.CharField( max_length=32, null=True, blank=True,)
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)

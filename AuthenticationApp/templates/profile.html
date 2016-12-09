@@ -12,12 +12,14 @@
 				</div>
 				<div class="body">
 					<center>
-						<img src="static/universityimages/purdue.jpg" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
 					{% if user.is_student and student != None %}
+						<img src=" {{ student.photo }}" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
 					<h3 class="media-heading">{{ user.get_full_name }} <small>Student</small></h3>
 					{% elif user.is_teacher and teacher != None %}
+						<img src=" {{ teacher.photo }}" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
 					<h3 class="media-heading">{{ user.get_full_name }} <small> {{ teacher.title }}</small></h3>
 					{% elif user.is_engineer and engineer != None %}
+						<img src=" {{ engineer.photo }}" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
 					<h3 class="media-heading">{{ user.get_full_name }} <small> {{ engineer.title }}</small></h3>
 					{% endif %}
 					{% if user.is_student and student != None %}

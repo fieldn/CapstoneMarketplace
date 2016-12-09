@@ -54,9 +54,11 @@ def auth_register(request):
 def register_teacher(request):
     form = RegisterTeacherForm(request.POST or None)
     if form.is_valid():
-        new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
+        new_user = MyUser.objects.create_user(
+            email=form.cleaned_data['email'], 
             password=form.cleaned_data["password2"], 
-            first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
+            first_name=form.cleaned_data['firstname'], 
+            last_name=form.cleaned_data['lastname'],
             is_teacher=True,
         )
         new_user.save()
@@ -64,6 +66,7 @@ def register_teacher(request):
             title = form.cleaned_data['teacherTitle'],
             phone = form.cleaned_data['teacherPhone'],
             office = form.cleaned_data['teacherOffice'],
+            photo = request.FILES['teacherPhoto'],  
             about = form.cleaned_data['teacherAbout'],
             )
         new_teacher.save()
@@ -84,15 +87,18 @@ def register_teacher(request):
 def register_student(request):
     form = RegisterStudentForm(request.POST or None)
     if form.is_valid():
-        new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
+        new_user = MyUser.objects.create_user(
+            email=form.cleaned_data['email'], 
             password=form.cleaned_data["password2"], 
-            first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
+            first_name=form.cleaned_data['firstname'], 
+            last_name=form.cleaned_data['lastname'],
             is_student=True,
         )
         new_user.save()
         new_student = Student(user = new_user,
             phone = form.cleaned_data['studentPhone'],
             about = form.cleaned_data['studentAbout'],
+            photo = request.FILES['studentPhoto'],  
             c_lang = form.cleaned_data['c_lang'],
             java_lang = form.cleaned_data['java_lang'],
             python_lang = form.cleaned_data['python_lang'],
@@ -122,9 +128,11 @@ def register_student(request):
 def register_engineer(request):
     form = RegisterEngineerForm(request.POST or None)
     if form.is_valid():
-        new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
+        new_user = MyUser.objects.create_user(
+            email=form.cleaned_data['email'], 
             password=form.cleaned_data["password2"], 
-            first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'],
+            first_name=form.cleaned_data['firstname'], 
+            last_name=form.cleaned_data['lastname'],
             is_engineer=True,
         )
         new_user.save()
@@ -132,6 +140,7 @@ def register_engineer(request):
             title = form.cleaned_data['engineerTitle'],
             phone = form.cleaned_data['engineerPhone'],
             almaMater = form.cleaned_data['engineerAlmaMater'],
+            photo = request.FILES['engineerPhoto'],  
             about = form.cleaned_data['engineerAbout'],
             )
         new_engineer.save()
