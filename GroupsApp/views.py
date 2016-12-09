@@ -82,6 +82,7 @@ def getGroup(request):
             'group' : in_group,
             'userIsMember': is_member,
             'projects' : matchedProjects,
+            'user' : request.user,
         }
         return render(request, 'group.html', context)
     # render error page if user is not logged in
@@ -302,13 +303,15 @@ def serialize(c):
         'id' : c.id,
         'time' : str(c.time),
         'comment' : c.comment,
-        'subcomments' : [serialize(getCommentByID(s)) for s in c.subcomments.split(',') if isInt(s)]
+        'subcomments' : [serialize(getCommentByID(s)) for s in c.subcomments.split(',') if isInt(s)],
+        'user' : c.user,
     }
 
 def getComments(request):
     gr = Group.objects.get(name=request.GET.get('name' or None))
     group_comments = gr.comment_set.all().filter(parent=True)
     comments_list = list(group_comments)
+    user = request.GET.get('user' or None)
     j = json.dumps({'list' : map(serialize, comments_list)})
     context = {'comments' : j, 'group_id' : gr.id}
     return render(request, 'gComments.html', context)
@@ -327,7 +330,7 @@ def gAddComment(request):
             parent = next((c for c in comments_list if c.id == identifier), None)
             group_id = request.POST['group_id']
 
-            new_comment = models.Comment(user=request.user, comment=comment, parent=parent==None, group_id=group_id)
+            new_comment = models.Comment(user=request.user.get_full_name(), comment=comment, parent=parent==None, group_id=group_id)
             new_comment.save()
             if parent != None:
                 parent.subcomments += ',' + str(new_comment.id)

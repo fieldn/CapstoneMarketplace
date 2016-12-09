@@ -35,7 +35,8 @@ function timeDifference(current, previous) {
 	$("#comments").html(function g (html, commentsList) {
 		return html + '<ul>' + commentsList.map(e => {
 			const sub = e.subcomments.length ? g(html, e.subcomments) : '' 
-			const timeStr = timeDifference(Date.now(), new Date(e.time))
+            console.log(e)
+			const timeStr = timeDifference(Date.now(), new Date(e.time)) + ' by ' + e.user
 			return `<li><p style="color: gray">${timeStr}</p><p data-id=${e.id}>${e.comment}<p>${sub} </li>`
 		}).join('') + '</ul>'
 	}('', $("#data").data('comments').list) + '<p data-id=-1>Click to add a comment</p>')
