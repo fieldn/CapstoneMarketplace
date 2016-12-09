@@ -84,6 +84,79 @@ def getGroup(request):
     # render error page if user is not logged in
     return render(request, 'autherror.html')
 
+def getGroupFormUpdate(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        group_name = request.get('group_name', 'None')
+        print "this is getting here"
+        all_courses = request.user.course_set.all()
+        form = GroupForm()
+        context = {
+                "form" : form,
+                "course_list" : all_courses
+                }
+        return render(request, 'groupformupdate.html', context)
+    # render error page if user is not logged in
+    return render(request, 'autherror.html')
+
+def updateGroupForm(request):
+    if request.user.is_authenticated():
+        if request.method == 'GET' :
+            print 'request name is get'
+            form = forms.GroupForm()
+            group_id = request.GET.get('id', 'None')
+            print group_id
+            group = models.Group.objects.get(id__exact=group_id)
+            group_name = group.name
+            group_desc = group.description
+            group_course = group.course
+            group_members = group.members.all()
+            context = {
+                    'form' : form,
+                    'group_id' : group_id,
+                    'group_name' : group_name,
+                    'group_desc' : group_desc,
+                    'group_course' : group_course,
+                    'group_members' : group_members,
+                    }
+            return render(request, 'groupformupdate.html', context)
+        elif request.method == 'POST' :
+            print 'request name is post'
+            form = forms.GroupForm(request.POST)
+            if form.is_valid():
+                group_id = request.GET.get('id', 'None')
+                print group_id
+                group = models.Group.objects.get(id__exact=group_id)
+                setattr(group, 'name', form.cleaned_data['name'])
+                setattr(group, 'description', form.cleaned_data['description'])
+                for item in form.cleaned_data['members'].split('\n'):
+                    try:
+                        person = models.MyUser.objects.filter(email__exact=item).get()
+                        if person in new_group.members.all():
+                            pass
+                        else:
+                            group.members.add(person)
+                    except:
+                        pass
+                group.save()
+                context = {
+                        'page_name' : 'Update Group',
+                        'name' : form.cleaned_data['name'],
+                        'action' : 'updated'
+                        }
+                '''print context.name'''
+                return render(request, 'groupformsuccess.html', context)
+            else:
+                form = forms.GroupForm()
+                print "form not valid."
+        if request.method == 'UPDATE' :
+            print 'request name is update'
+        else:
+            form = forms.GroupForm()
+            return render(request, 'groupform.html')
+        # render error page if user is not logged in
+    return render(request, 'autherror.html')
+
 def getGroupForm(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
@@ -107,7 +180,6 @@ def getGroupFormSuccess(request):
                 if models.Group.objects.filter(name__exact=form.cleaned_data['name']).exists():
                     all_courses = request.user.course_set.all()
                     return render(request, 'groupform.html', {'error' : 'Error: That Group name already exists!', "course_list" : all_courses })
-                print form.__dict__
                 new_group = models.Group(
                         name=form.cleaned_data['name'], 
                         description=form.cleaned_data['description'], 
@@ -122,16 +194,17 @@ def getGroupFormSuccess(request):
                     except:
                         None
                 context = {
+                    'page_name' : 'Create A Group',
                     'name' : form.cleaned_data['name'],
+                    'action' : 'created'
                 }
                 return render(request, 'groupformsuccess.html', context)
             else:
                 print "form not valid."
-        else:
             form = forms.GroupForm()
-        return render(request, 'groupform.html')
-    # render error page if user is not logged in
-    return render(request, 'autherror.html')
+            return render(request, 'groupform.html', {'page_name':'Create A Group'})
+        # render error page if user is not logged in
+        return render(request, 'autherror.html')
 
 def joinGroup(request):
     if request.user.is_authenticated():

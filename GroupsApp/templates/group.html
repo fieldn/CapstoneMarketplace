@@ -4,7 +4,7 @@
 
 	<!-- Content -->
 	<div class="container theme-showcase" role="main">
-		<div class="jumbotron">
+		<div class="jumbotron" style="background-color:#DDE0F8">
 			<h1>{{ group.name }}</h1>
 			{% if group.project != None %}
             <h2><a href="/project?name={{ group.project }}">{{ group.project }}</h2>
@@ -12,6 +12,7 @@
 			<p>{{ group.description }}</p>
 			{% if userIsMember %}
 			<a href="/group/unjoin?name={{ group.name }}" class="btn btn-default">Unjoin this Group</a>
+			<a href="/group/update?id={{ group.id }}" class="btn btn-default">Update Group</a>
 			{% else %}
 			<a href="/group/join?name={{ group.name }}" class="btn btn-default">Join this Group</a>
 			{% endif %}
