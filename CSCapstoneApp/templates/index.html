@@ -5,9 +5,14 @@
 	<!-- Content -->
     <div class="container theme-showcase" role="main">
 		<div class="jumbotron">
-			<h1 class="text-center">Hi There!</h1>
+            {% if userObj == None %}
+            <h1 class="text-center">Hi There!</h1>
+            {% else %}
+            <h1 class="text-center">Hi {{ userObj.first_name }}!</h1>
+            {% endif %}
 			<p class="text-center">Welcome to the CS390-Python CS Capstone Project.</p>
 			<br>
+            {% if userObj == None %}
 			<div class="container">
 				<div class="row jumbotron-area">
 					<div class="col-md-6">
@@ -18,7 +23,68 @@
 					</div>
 				</div>
 			</div>
+            {% endif %}
 		</div>
     </div>
+    {% if groups %}
+    <div class="container" role="main">
+        <div class="table-responsive">
+            <table class="table table-striped sortable">
+                <thead>
+                    <tr>
+                        <th>Groups</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in groups %}
+                    <tr>
+                        <td><a href="/group?name={{item.name}}">{{ item.name }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    {% if courses %}
+    <div class="container" role="main">
+        <div class="table-responsive">
+            <table class="table table-striped sortable">
+                <thead>
+                    <tr>
+                        <th>Courses</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in courses %}
+                    <tr>
+                        <td><a href="/university/course?name={{item.university}}&course={{item.tag}}">{{ item.name }} ({{item.tag}})</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    {% if projects %}
+    <div class="container" role="main">
+        <div class="table-responsive">
+            <table class="table table-striped sortable">
+                <thead>
+                    <tr>
+                        <th>Projects</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in projects %}
+                    <tr>
+                        <td><a href="/project?name={{item.name}}">{{ item.name }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
 
 {% endblock %}

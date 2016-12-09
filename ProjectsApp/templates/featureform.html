@@ -1,0 +1,25 @@
+{% extends "body.html" %}
+
+{% block head_title %} {{ page_name }} | {% endblock %}
+
+{% block content %}
+
+<script type="text/javascript" src="/static/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript" src="/static/django_tinymce/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/django_tinymce/init_tinymce.js"></script>
+
+<br>
+<div class="container" role="main">
+	<div class="panel panel-default">
+		<div class="jumbotron" style="margin-bottom:0px">
+			<h1>Add Feature</h1>
+			<form method="POST" class="panel-body" novalidate> {% csrf_token %}
+				<h6 style="color:green">{{ success }}</h6>
+				{{ form.as_p }}
+				<input type="submit" class='btn btn-primary' value="Update">
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
