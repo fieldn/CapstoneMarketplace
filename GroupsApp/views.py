@@ -32,6 +32,9 @@ def getGroup(request):
 
         features = None
         matchedProjects = []
+        totalWeight = 0
+        completedWeight = 0
+        percentComplete = 0
         if in_group.project == None:
 
             c_lang = True
@@ -83,18 +86,16 @@ def getGroup(request):
                 matchedProjects.append(project)
         else:
             required_features = in_group.project.feature_set.all()
-            totalWeight = 0
             for f in required_features:
                 totalWeight += f.weight
 
             completed_features = in_group.features.all()
-            completedWeight = 0
             for f in completed_features:
                 completedWeight += f.weight
 
+            percentComplete = 100 * completedWeight / float(totalWeight)
+
             features = set(required_features) - set(completed_features)
-            print totalWeight
-            print completedWeight / totalWeight
 
         context = {
             'group' : in_group,
@@ -104,7 +105,7 @@ def getGroup(request):
             'completeFeatures' : completed_features,
             'totalWeight' : totalWeight,
             'completedWeight' : completedWeight,
-            'completedPercent' : 100 * completedWeight / float(totalWeight),
+            'completedPercent' : percentComplete,
             'user' : request.user.get_full_name(),
             'university' : in_university,
         }
