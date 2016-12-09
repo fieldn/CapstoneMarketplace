@@ -238,6 +238,39 @@ def unjoinGroup(request):
         return render(request, 'group.html', context)
     return render(request, 'autherror.html')
 
+def removeGroup(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        in_group = models.Group.objects.get(name__exact=in_name)
+
+        if not request.user.is_student:
+            return render(request, 'group.html', context = {
+                'group' : in_group,
+                'userIsMember': False,
+                })
+
+        if not request.user in in_group.members.all():
+            return render(request, 'group.html', context = {
+                'group' : in_group,
+                'userIsMember': False,
+                })
+
+        if len(in_group.members.all()) > 1:
+            return render(request, 'group.html', context = {
+                'group' : in_group,
+                'userIsMember': True,
+                })
+
+        in_group.delete()
+
+        groups_list = models.Group.objects.all()
+        context = {
+            'groups' : groups_list,
+        }
+        return render(request, 'groups.html', context)
+    # render error page if user is not logged in
+    return render(request, 'autherror.html')
+
 def acceptProject(request):
     if request.user.is_authenticated():
         in_project_name = request.GET.get('project', 'None')
@@ -253,8 +286,6 @@ def acceptProject(request):
         }
         return render(request, 'group.html', context)
     return render(request, 'autherror.html')
-
-
 
 # Everything below is for the comment section
 
@@ -292,8 +323,8 @@ def gAddComment(request):
             new_comment = models.Comment(user=request.user, comment=comment, parent=parent==None)
             new_comment.save()
             if parent != None:
-				parent.subcomments += ',' + str(new_comment.id)
-				parent.save();
+                parent.subcomments += ',' + str(new_comment.id)
+                parent.save();
             response_data = { 'error' : 'success' }
             return HttpResponse(json.dumps(response_data), content_type='application/json')
         except KeyError:

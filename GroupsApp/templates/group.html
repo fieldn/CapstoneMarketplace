@@ -78,6 +78,7 @@ function timeDifference(current, previous) {
 			{% if userIsMember %}
 			<a href="/group/unjoin?name={{ group.name }}" class="btn btn-default">Unjoin this Group</a>
 			<a href="/group/update?id={{ group.id }}" class="btn btn-default">Update Group</a>
+			<a href="/group/remove?name={{ group.name }}" class="btn btn-default">Remove Group</a>
 			{% else %}
 			<a href="/group/join?name={{ group.name }}" class="btn btn-default">Join this Group</a>
 			{% endif %}
