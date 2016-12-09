@@ -2,42 +2,82 @@
 
 {% block content %}
 
+<div class="container">
+	<!-- Modal -->
 <div class="container" role="main">
-        <h2> {{ user.get_full_name}} </h2>
-        <h4> <a href="mailto:user.email">{{ user.email }}</a> </h4>
-            {% if user.is_student  and student != None %}
-            About: {{ student.about | safe }}
-            <p>
-            <b>Contact Info:</b>
-            <p>
-            Phone: {{ student.phone }}
-            {% endif %}
-            {% if user.is_teacher and teacher != None %}
-            <p>
-            Title: {{ teacher.title }}
-            <p>
-            About: {{ teacher.about | safe }}
-            <p>
-            <b>Contact Info:</b>
-            <p>
-            Phone: {{ teacher.phone }}
-            <p>
-            Office: {{ teacher.office }}
-            <p>
-            {% endif %}
-            {% if user.is_engineer and engineer != None %}
-            <p>
-            Title: {{ engineer.title }}
-            <p>
-            Alma Mater: {{ engineer.almaMater }}
-            <p>
-            About: {{ engineer.about | safe }}
-            <p>
-            <b>Contact Info:</b>
-            <p>
-            Phone: {{ engineer.phone }}
-            <p>
-            {% endif %}
+		<div class="modal-dialog">
+			<div class="content">
+				<div class="header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+				</div>
+				<div class="body">
+					<center>
+						<img src="static/universityimages/purdue.jpg" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
+					{% if user.is_student and student != None %}
+					<h3 class="media-heading">{{ user.get_full_name }} <small>Student</small></h3>
+					{% elif user.is_teacher and teacher != None %}
+					<h3 class="media-heading">{{ user.get_full_name }} <small> {{ teacher.title }}</small></h3>
+					{% elif user.is_engineer and engineer != None %}
+					<h3 class="media-heading">{{ user.get_full_name }} <small> {{ engineer.title }}</small></h3>
+					{% endif %}
+					{% if user.is_student and student != None %}
+					<span><strong>Languages: </strong></span>
+					{% if student.c_lang == True %}
+					<span class="label label-success">C</span>
+					{% endif %}
+					{% if student.java_lang == True %}
+					<span class="label label-success">Java</span>
+					{% endif %}
+					{% if student.python_lang == True %}
+					<span class="label label-success">Python</span>
+					{% endif %}
+					<br>
+					<span><strong>Specifications: </strong></span>
+					{% if student.front_end_spec == True %}
+					<span class="label label-success">Front End</span>
+					{% endif %}
+					{% if student.back_end_spec == True %}
+					<span class="label label-success">Back End</span>
+					{% endif %}
+					{% if student.full_stack_spec == True %}
+					<span class="label label-success">Full Stack</span>
+					{% endif %}
+					{% if student.mobile_spec == True %}
+					<span class="label label-success">Mobile</span>
+					{% endif %}
+					<br>
+					<span><strong>Years of Experience: </strong></span>
+					<span class="label label-success"> {{ student.yrs_of_exp }}</span>
+					{% endif %}
+					<center>
+						<p class="text-left"><strong>Contact Info: </strong><br>
+        				<a href="mailto:user.email">{{ user.email }}</a>
+						<br>
+						{% if user.is_student and student != None %}
+						Phone: {{ student.phone }}
+						{% elif user.is_teacher and teacher != None %}
+						Phone: {{ teacher.phone }}
+						<br>
+            			Office: {{ teacher.office }}
+						{% elif user.is_engineer and engineer != None %}
+						Phone: {{ engineer.phone }}
+						{% endif %}
+					</center>
+					</center>
+					<hr>
+						<p class="text-left"><strong>About: </strong><br>
+						{{ teacher.about | safe }}
+				</div>
+				<div class="modal-footer">
+					{% if current_user == user %}
+					<center>
+						<a href="/update" class="btn btn-default">Update Profile</a>
+					</center>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 {% endblock %}

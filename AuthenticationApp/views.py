@@ -101,6 +101,7 @@ def register_student(request):
             java_lang = form.cleaned_data['java_lang'],
             python_lang = form.cleaned_data['python_lang'],
             no_lang = form.cleaned_data['no_lang'],
+            mobile_spec = form.cleaned_data['mobile_spec'],
             front_end_spec = form.cleaned_data['front_end_spec'],
             back_end_spec = form.cleaned_data['back_end_spec'],
             full_stack_spec = form.cleaned_data['full_stack_spec'],
@@ -188,6 +189,8 @@ def view_profile(request):
     # find the user
     in_name = request.GET.get('user')
     in_user = MyUser.objects.get(email__exact=in_name)
+    
+    current_user = request.user
 
     # find the information specific to the user's role
     student = None
@@ -201,7 +204,8 @@ def view_profile(request):
     if in_user.is_engineer:
         engineer = Engineer.objects.get(user=in_user)
 
-    context = {'user': in_user, 
+    context = {'current_user' : current_user,
+            'user': in_user, 
             'student' : student,
             'teacher' : teacher,
             'engineer' : engineer,
