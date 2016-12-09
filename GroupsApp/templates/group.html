@@ -82,13 +82,25 @@
                     <tr>
                         <td>{{item.name}}</td>
                         <td>{{item.description}}</td>
-                        <td><a href="/group/feature/done?group={{ group.name}}&feat_id={{ item.id }}" class="btn btn-default">Done!</a></td>
+                        <td>
+                            <form action="/group/feature/done?group={{ group.name}}&feat_id={{ item.id }}" method="post">
+				                {% csrf_token %}
+                                <button type="submit" class="btn btn-default">Complete</button>
+                            </form>
+                        </td>
+
                     </tr>
                     {% endfor %}
                     {% for item in completeFeatures %}
                     <tr>
                         <td><s>{{item.name}}</s></td>
                         <td><s>{{item.description}}</s></td>
+                        <td>
+                            <form action="/group/feature/undone?group={{ group.name}}&feat_id={{ item.id }}" method="post">
+				                {% csrf_token %}
+                                <button type="submit" class="btn btn-default">Incomplete</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
