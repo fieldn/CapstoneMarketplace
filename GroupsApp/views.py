@@ -104,7 +104,6 @@ def getGroup(request):
         group_comments = gr.comment_set.all().filter(parent=True, deleted=False)
         comments_list = list(group_comments)
         j = json.dumps({'list' : map(serialize, comments_list)})
-        user = request.GET.get('user' or None)
         context = {
             'group' : in_group,
             'userIsMember': is_member,
@@ -118,12 +117,10 @@ def getGroup(request):
             'university' : in_university,
             'comments' : j,
             'group_id' : gr.id,
-            'user' : user,
-            'is_teacher' : True,
-            'is_engineer' : False,
         }
 
         return render(request, 'group.html', context)
+
     # render error page if user is not logged in
     return render(request, 'autherror.html')
 

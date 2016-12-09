@@ -62,6 +62,8 @@ function timeDifference(current, previous) {
 		li.append(button) 
 
         let del_button = $('<br><input style="color:red" type=button value="Delete Comment">')
+        console.log({{user}})
+        console.log(opId)
         if (opId === '{{user}}')
             li.append(del_button)
 
@@ -80,6 +82,7 @@ function timeDifference(current, previous) {
                 group_id: groupId,
                 university: '{{university}}',
 			}, data => {
+                console.log(data)
                 if (data['response'] !== '')
                     $("#response").text(data['response'])
                 else
